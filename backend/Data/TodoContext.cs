@@ -10,6 +10,9 @@ public class TodoContext : DbContext
     public DbSet<MembershipStatus> MembershipStatuses { get; set; }
     public DbSet<Teams> Teams { get; set; }
     public DbSet<TeamMembers> TeamMembers { get; set; }
+    public DbSet<Priorities> Priorities { get; set; }
+
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -17,5 +20,6 @@ public class TodoContext : DbContext
         modelBuilder.Entity<MembershipStatus>().ToTable("membership_status");
         modelBuilder.Entity<Teams>().ToTable("teams");
         modelBuilder.Entity<TeamMembers>().ToTable("team_members");
+        modelBuilder.Entity<Priorities>().ToTable("priorities");
     }
 }
