@@ -25,6 +25,9 @@ builder.Services.AddScoped<IPrioritiesService, PrioritiesService>();
 builder.Services.AddScoped<ITaskStatusesRepository, TaskStatusesRepository>();
 builder.Services.AddScoped<ITaskStatusesService, TaskStatusesService>();
 
+builder.Services.AddScoped<ITodosRepository, TodosRepository>();
+builder.Services.AddScoped<ITodosService, TodosService>();
+
 var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 
 builder.Services.AddDbContext<TodoContext>(options =>
