@@ -13,8 +13,7 @@ public class TodoContext : DbContext
     public DbSet<Priorities> Priorities { get; set; }
     public DbSet<TaskStatuses> TaskStatuses { get; set; }
     public DbSet<Todos> Todos { get; set; }
-
-
+    public DbSet<Users> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -25,5 +24,6 @@ public class TodoContext : DbContext
         modelBuilder.Entity<Priorities>().ToTable("priorities");
         modelBuilder.Entity<TaskStatuses>().ToTable("task_status");
         modelBuilder.Entity<Todos>().ToTable("todos");
+        modelBuilder.Entity<Users>().ToTable("users");
     }
 }

@@ -28,6 +28,9 @@ builder.Services.AddScoped<ITaskStatusesService, TaskStatusesService>();
 builder.Services.AddScoped<ITodosRepository, TodosRepository>();
 builder.Services.AddScoped<ITodosService, TodosService>();
 
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+builder.Services.AddScoped<IUsersService, UsersService>();
+
 var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 
 builder.Services.AddDbContext<TodoContext>(options =>
