@@ -8,7 +8,6 @@ function Registration() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(email, username, password, confirmPassword);
 
     if (password !== confirmPassword) {
       alert("Passwords do not match");
