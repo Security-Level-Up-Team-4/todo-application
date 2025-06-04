@@ -22,6 +22,9 @@ builder.Services.AddScoped<ITeamsService, TeamsService>();
 builder.Services.AddScoped<IPrioritiesRepository, PrioritiesRepository>();
 builder.Services.AddScoped<IPrioritiesService, PrioritiesService>();
 
+builder.Services.AddScoped<ITaskStatusesRepository, TaskStatusesRepository>();
+builder.Services.AddScoped<ITaskStatusesService, TaskStatusesService>();
+
 var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 
 builder.Services.AddDbContext<TodoContext>(options =>

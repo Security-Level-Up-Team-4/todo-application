@@ -11,6 +11,7 @@ public class TodoContext : DbContext
     public DbSet<Teams> Teams { get; set; }
     public DbSet<TeamMembers> TeamMembers { get; set; }
     public DbSet<Priorities> Priorities { get; set; }
+    public DbSet<TaskStatuses> TaskStatuses { get; set; }
 
 
 
@@ -21,5 +22,6 @@ public class TodoContext : DbContext
         modelBuilder.Entity<Teams>().ToTable("teams");
         modelBuilder.Entity<TeamMembers>().ToTable("team_members");
         modelBuilder.Entity<Priorities>().ToTable("priorities");
+        modelBuilder.Entity<TaskStatuses>().ToTable("task_status");
     }
 }
