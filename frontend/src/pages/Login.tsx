@@ -6,7 +6,6 @@ function Login() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(email, password);
   };
   return (
     <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
