@@ -1,6 +1,11 @@
+import { useNavigate } from "react-router-dom";
+
 function Login() {
+    const navigate = useNavigate();
+
   return (
-    <h1>This is a login page</h1>
+    <button onClick={()=>navigate("teams")}>teams</button>
+
   );
 }
 
