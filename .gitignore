@@ -41,7 +41,7 @@ x64/
 x86/
 build/
 bld/
-[Bb]in/
+backend/[Bb]in/
 [Oo]bj/
 
 # Rider
@@ -128,3 +128,12 @@ override.tf.json
 .terraform.lock.hcl
 *.tfvars
 *.tfvars.json
+
+*.js
+!jest.config.js
+*.d.ts
+node_modules
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out
