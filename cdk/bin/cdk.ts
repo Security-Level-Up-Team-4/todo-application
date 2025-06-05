@@ -9,7 +9,8 @@ const recipients = [
   'Vuyo.Sibiya@bbd.co.za',
   'Ryan.Christie@bbd.co.za',
   'Tshepo.Ncube@bbd.co.za',
-  'Rorisang.Shadung@bbd.co.za'
+  'Rorisang.Shadung@bbd.co.za',
+  'rudolphe@bbd.co.za'
 ]
 
 new CdkStack(app, 'TodoCdkStack-prod', {
@@ -17,7 +18,7 @@ new CdkStack(app, 'TodoCdkStack-prod', {
   description: 'Team 4 - AWS CDK Stack',
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,
-    region: "af-south-1",
+    region: "us-east-1",
   },
   alertEmails: recipients,
 });
