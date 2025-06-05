@@ -12,7 +12,7 @@ export class CdkStack extends cdk.Stack {
 
     const maxBudgetAmount = 50.00;
     const forecastedThresholds = [50, 75]
-    const actualThresholds = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    const actualThresholds = [10, 20, 30, 40, 60, 80, 90, 100];
 
     new budgets.CfnBudget(this, 'Team4Budget', {
       budget: {
@@ -28,7 +28,7 @@ export class CdkStack extends cdk.Stack {
         ...forecastedThresholds.map(percent => ({
           notification: {
             comparisonOperator: 'GREATER_THAN',
-            notificationType: 'ACTUAL',
+            notificationType: 'FORECASTED',
             threshold: percent,
             thresholdType: 'PERCENTAGE',
             notificationState: 'ALARM'
@@ -55,6 +55,5 @@ export class CdkStack extends cdk.Stack {
         }))
       ]
     });
-
   }
 }
