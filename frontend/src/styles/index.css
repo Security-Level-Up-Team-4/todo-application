@@ -10,9 +10,8 @@ html, body {
 
 #root {
   display: flex;
+  flex-direction: column;
   width: 100%;
   min-height: 100svh;
   box-sizing: border-box;
-  justify-content: center;
-  align-items: center;
 }

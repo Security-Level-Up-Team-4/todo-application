@@ -1,4 +1,4 @@
-import React from "react";
+import Navbar from "../components/Navbar";
 
 const mockLogs = [
   { time: "14:23", date: "02/06/2025", message: "Created" },
@@ -10,19 +10,22 @@ const mockLogs = [
 
 const Logs = () => {
   return (
-    <div className="bg-gray-200 rounded-lg shadow-lg p-8 w-full max-w-2xl">
+    <>
+    <Navbar></Navbar>
+    <section className="m-auto bg-gray-200 rounded-lg shadow-lg p-8 w-full max-w-2xl">
       <h2 className="text-2xl font-bold text-center mb-6 tracking-wide">
         TO-DO 1
       </h2>
-      <div className="space-y-3">
+      <section className="space-y-3">
         {mockLogs.map((log, idx) => (
-          <div key={idx} className="flex justify-between font-mono text-lg">
+          <section key={idx} className="flex justify-between font-mono text-lg">
             <span>{`${log.time} - ${log.date}`}</span>
             <span>{log.message}</span>
-          </div>
+          </section>
         ))}
-      </div>
-    </div>
+      </section>
+    </section>
+    </>
   );
 };
 
