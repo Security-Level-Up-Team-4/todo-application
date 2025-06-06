@@ -25,10 +25,40 @@ public class PrioritiesService : IPrioritiesService
         return priority == null ? null : priority;
     }
 
-    public async Task<Priorities> CreateAsync(PrioritiesDto dto)
+    public async Task<Priorities> CreateAsync(string priorityName)
     {
-        var priority = new Priorities { Name = dto.Name };
+        var existingPriority = await _repository.GetByNameAsync(priorityName);
+        if (existingPriority != null)
+        {
+            throw new InvalidOperationException($"Priority '{priorityName}' already exists.");
+        }
+
+        var priority = new Priorities { Name = priorityName };
         var created = await _repository.CreateAsync(priority);
         return created;
+    }
+
+    public async Task<Priorities?> UpdateAsync(int id, string updatedPriority)
+    {
+        if (string.IsNullOrWhiteSpace(updatedPriority))
+        {
+            throw new ArgumentException("Updated priority name cannot be null or empty.", nameof(updatedPriority));
+        }
+
+        var existing = await _repository.GetByIdAsync(id);
+        if (existing == null)
+        {
+            throw new KeyNotFoundException($"Priority with ID {id} not found.");
+        }
+
+        var existingPriority = await _repository.GetByNameAsync(updatedPriority);
+        if (existingPriority != null )
+        {
+            throw new InvalidOperationException($"Priority '{updatedPriority}' already exists.");
+        }
+
+        existing.Name = updatedPriority;
+        var updated = await _repository.UpdateAsync(id, updatedPriority);
+        return updated;
     }
 }

@@ -32,9 +32,38 @@ public class PriorityController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Priorities>> Create(PrioritiesDto dto)
+    public async Task<ActionResult<Priorities>> Create(string priorityName)
     {
-        var created = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { id = created.Name }, created);
+        if (string.IsNullOrWhiteSpace(priorityName))
+        {
+            return BadRequest("Priority name cannot be null or empty.");
+        }
+
+        var created = await _service.CreateAsync(priorityName);
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
+    
+    [HttpPut("{id}")]
+    public async Task<ActionResult<Priorities>> Update(int id, string updatedPriority)
+    {
+        if (string.IsNullOrWhiteSpace(updatedPriority))
+        {
+            return BadRequest("Updated priority name cannot be null or empty.");
+        }
+
+        try
+        {
+            var updated = await _service.UpdateAsync(id, updatedPriority);
+            return Ok(updated);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(ex.Message);
+        }
+    }
+  
 }

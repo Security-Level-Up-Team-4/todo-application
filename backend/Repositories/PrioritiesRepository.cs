@@ -29,4 +29,30 @@ public class PrioritiesRepository : IPrioritiesRepository
         await _context.SaveChangesAsync();
         return priority;
     }
+
+    public async Task<Priorities?> UpdateAsync(int id, string updatedPriority)
+    {
+        var existing = await _context.Priorities.FindAsync(id);
+        if (existing == null) 
+        {
+            throw new KeyNotFoundException($"Priority with ID {id} not found.");
+        }
+
+        var existingPriority = await GetByNameAsync(updatedPriority);
+        
+        if (existingPriority != null)
+        {
+            throw new InvalidOperationException($"Priority '{updatedPriority}' already exists.");
+        }
+
+        existing.Name = updatedPriority;
+        _context.Priorities.Update(existing);
+        await _context.SaveChangesAsync();
+        return existing;
+    }
+
+    public async Task<Priorities?> GetByNameAsync(string name)
+    {
+        return await _context.Priorities.FirstOrDefaultAsync(p => p.Name == name);
+    }
 }
