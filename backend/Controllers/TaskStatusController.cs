@@ -33,23 +33,19 @@ public class TaskStatusesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<TaskStatusesDTO>> Create(TaskStatusesDTO dto)
+    public async Task<ActionResult<TaskStatusesDTO>> Create(string dto)
     {
+        if (string.IsNullOrWhiteSpace(dto))
+            return BadRequest("Task status cannot be empty.");
+
         var created = await _service.CreateAsync(dto);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, TaskStatusesDTO dto)
+    public async Task<IActionResult> Update(int id, string taskName)
     {
-        await _service.UpdateAsync(dto);
-        return NoContent();
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        await _service.DeleteAsync(id);
+        await _service.UpdateAsync(id, taskName);
         return NoContent();
     }
 }

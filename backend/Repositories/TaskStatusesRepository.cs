@@ -45,4 +45,10 @@ public class TaskStatusesRepository : ITaskStatusesRepository
             await _context.SaveChangesAsync();
         }
     }
+
+    public Task<TaskStatuses?> GetByNameAsync(string name)
+    {
+        return _context.TaskStatuses
+            .FirstOrDefaultAsync(ts => ts.Name.ToLower().Equals(name.ToLower()));
+    }
 }

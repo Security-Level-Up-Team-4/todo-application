@@ -9,4 +9,5 @@ public interface ITaskStatusesRepository
     Task<TaskStatuses> CreateAsync(TaskStatuses status);
     Task UpdateAsync(TaskStatuses status);
     Task DeleteAsync(int id);
+    Task<TaskStatuses?> GetByNameAsync(string name);
 }

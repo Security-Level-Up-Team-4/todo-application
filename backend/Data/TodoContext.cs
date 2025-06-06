@@ -22,7 +22,7 @@ public class TodoContext : DbContext
         modelBuilder.Entity<Teams>().ToTable("teams");
         modelBuilder.Entity<TeamMembers>().ToTable("team_members");
         modelBuilder.Entity<Priorities>().ToTable("priorities");
-        modelBuilder.Entity<TaskStatuses>().ToTable("task_status");
+        modelBuilder.Entity<TaskStatuses>().ToTable("todo_status");
         modelBuilder.Entity<Todos>().ToTable("todos");
         modelBuilder.Entity<Users>().ToTable("users");
     }
