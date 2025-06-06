@@ -18,13 +18,13 @@ public class MembershipStatusService : IMembershipStatusService
         return await _repository.GetAllAsync();
     }
 
-    public async Task<MembershipStatus> CreateStatusAsync(MembershipStatusDto status)
+    public async Task<MembershipStatus> CreateStatusAsync(string status)
     {
-        await ValidateStatusNameIsUniqueAsync(status.Name);
+        await ValidateStatusNameIsUniqueAsync(status);
 
         var newStatus = new MembershipStatus
         {
-            Name = status.Name
+            Name = status
         };
 
         return await _repository.AddAsync(newStatus);

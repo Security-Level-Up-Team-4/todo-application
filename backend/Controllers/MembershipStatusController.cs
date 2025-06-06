@@ -30,4 +30,11 @@ public class MembershipStatusController : ControllerBase
             return NotFound();
         return Ok(status);
     }
+
+    [HttpPost]
+    public async Task<ActionResult<MembershipStatusDto>> CreateStatus([FromBody] string statusName)
+    {
+        var newStatus = await _membershipStatusService.CreateStatusAsync(statusName);
+        return CreatedAtAction(nameof(GetStatusById), new { id = newStatus.Id }, newStatus);
+    }
 }
