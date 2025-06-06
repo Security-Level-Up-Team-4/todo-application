@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const ErrorComponent = ({ errorTitle, errorMessage }) => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#5656b6]">
+    <div className="min-h-screen h-100 flex items-center justify-center bg-[#5656b6]">
       <div className="w-full max-w-xl bg-[#5656b6] rounded-lg flex flex-col items-center py-16 px-4">
         <h1 className="text-white text-xl font-semibold mb-6">{errorTitle}</h1>
         <p className="text-gray-100 text-center mb-2">
