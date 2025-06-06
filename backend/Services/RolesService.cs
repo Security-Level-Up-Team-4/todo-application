@@ -1,53 +1,61 @@
 ﻿using backend.Data;
-using backend.DTOs;
+using backend.Repositories;
 using backend.Models;
 
 namespace backend.Services;
 
 public class RolesService : IRolesService
 {
-    private readonly TodoContext _context;
+    private readonly IRoleRepository _roleRepository;
 
-    public RolesService(TodoContext context)
+    public RolesService(IRoleRepository roleRepository)
     {
-        _context = context;
+        _roleRepository = roleRepository;
     }
 
     public async Task<IEnumerable<Roles>> GetAllRolesAsync()
     {
-        return await Task.FromResult(_context.Roles.ToList());
+        return await _roleRepository.GetAllAsync();
     }
 
     public async Task<Roles?> GetRoleByIdAsync(int id)
     {
-        return await _context.Roles.FindAsync(id);
+        return await _roleRepository.GetByIdAsync(id);
     }
 
-    public async Task<Roles> CreateRoleAsync(RolesDto roleDto)
+    public async Task<Roles> CreateRoleAsync(string roleName)
     {
-        var role = new Roles { Name = roleDto.Name };
-        _context.Roles.Add(role);
-        await _context.SaveChangesAsync();
-        return role;
-    }
+       await GetRoleByNameAsync(roleName);
+        var newRole = new Roles
+        {
+            Name = roleName
+        };
 
-    public async Task<Roles?> UpdateRoleAsync(int id, RolesDto roleDto)
+        return await _roleRepository.AddAsync(newRole);
+    }
+        
+
+    public async Task<Roles?> UpdateRoleAsync(int id, string roleDto)
     {
-        var role = await _context.Roles.FindAsync(id);
-        if (role == null) return null;
+        var existingRole = await _roleRepository.GetByIdAsync(id);
 
-        role.Name = roleDto.Name;
-        await _context.SaveChangesAsync();
-        return role;
+        if (existingRole == null)
+        {
+            throw new KeyNotFoundException($"Role with ID {id} not found.");
+        }
+
+        await GetRoleByNameAsync(roleDto);
+        
+        existingRole.Name = roleDto;
+        return await _roleRepository.UpdateAsync(id, roleDto);
     }
-
-    public async Task<bool> DeleteRoleAsync(int id)
+    public async Task GetRoleByNameAsync(string name)
     {
-        var role = await _context.Roles.FindAsync(id);
-        if (role == null) return false;
-
-        _context.Roles.Remove(role);
-        await _context.SaveChangesAsync();
-        return true;
+       var roleWithSameName = await _roleRepository.GetByNameAsync(name);
+        if (roleWithSameName != null)
+        {
+            throw new InvalidOperationException($"Role '{name}' already exists.");
+        }
     }
+
 }

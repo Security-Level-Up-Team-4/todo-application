@@ -31,25 +31,25 @@ public class RolesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateRole([FromBody] RolesDto roleDto)
+    public async Task<ActionResult> CreateRole([FromBody] string roleName)
     {
-        var createdRole = await _roleService.CreateRoleAsync(roleDto);
+        if (string.IsNullOrWhiteSpace(roleName))
+        {
+            return BadRequest("Role name cannot be empty.");
+        }
+        var createdRole = await _roleService.CreateRoleAsync(roleName);
         return CreatedAtAction(nameof(GetRoleById), new { id = createdRole.Id }, createdRole);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateRole(int id, [FromBody] RolesDto roleDto)
+    public async Task<IActionResult> UpdateRole(int id, [FromBody] string roleName)
     {
-        var updatedRole = await _roleService.UpdateRoleAsync(id, roleDto);
+        if (string.IsNullOrWhiteSpace(roleName))
+        {
+            return BadRequest("Role name cannot be empty.");
+        }
+        var updatedRole = await _roleService.UpdateRoleAsync(id, roleName);
         if (updatedRole == null) return NotFound();
         return Ok(updatedRole);
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteRole(int id)
-    {
-        var result = await _roleService.DeleteRoleAsync(id);
-        if (!result) return NotFound();
-        return NoContent();
     }
 }

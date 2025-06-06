@@ -27,4 +27,22 @@ public class RoleRepository : IRoleRepository
     public async Task<bool> ExistsAsync(int id) => await _context.Roles.AnyAsync(r => r.Id == id);
 
     public async Task SaveChangesAsync() => await _context.SaveChangesAsync();
+
+    public async Task<Roles?> UpdateAsync(int id, string role)
+    {
+        var existingRole = await GetByIdAsync(id);
+        if (existingRole == null)
+        {
+            throw new KeyNotFoundException($"Role with ID {id} not found.");
+        }
+
+        existingRole.Name = role;
+        _context.Roles.Update(existingRole);
+        await _context.SaveChangesAsync();
+        return existingRole;
+    }
+    public async Task<Roles?> GetByNameAsync(string roleName)
+    {
+        return await _context.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
+    }
 }
