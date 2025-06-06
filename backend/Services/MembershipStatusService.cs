@@ -1,57 +1,57 @@
-using backend.Data;
 using backend.DTOs;
 using backend.Models;
-using Microsoft.EntityFrameworkCore;
+using backend.Repositories;
 
 namespace backend.Services;
 
 public class MembershipStatusService : IMembershipStatusService
 {
-    private readonly TodoContext _context;
+    private readonly IMembershipStatusRepository _repository;
 
-    public MembershipStatusService(TodoContext context)
+    public MembershipStatusService(IMembershipStatusRepository repository)
     {
-        _context = context;
+        _repository = repository;
     }
 
     public async Task<IEnumerable<MembershipStatus>> GetAllStatusesAsync()
     {
-        return await _context.MembershipStatuses.ToListAsync();
-    }
-
-    public async Task<MembershipStatus?> GetStatusByIdAsync(int id)
-    {
-        return await _context.MembershipStatuses.FindAsync(id);
+        return await _repository.GetAllAsync();
     }
 
     public async Task<MembershipStatus> CreateStatusAsync(MembershipStatusDto status)
     {
+        await ValidateStatusNameIsUniqueAsync(status.Name);
+
         var newStatus = new MembershipStatus
         {
             Name = status.Name
         };
-        _context.MembershipStatuses.Add(newStatus);
-        await _context.SaveChangesAsync();
-        return newStatus;
+
+        return await _repository.AddAsync(newStatus);
+    }
+
+    public async Task<MembershipStatus?> GetStatusByIdAsync(int id)
+    {
+        return await _repository.GetByIdAsync(id);
     }
 
     public async Task<MembershipStatus?> UpdateStatusAsync(int id, MembershipStatusDto updatedStatus)
     {
-        var existing = await _context.MembershipStatuses.FindAsync(id);
-        if (existing == null) return null;
+        await ValidateStatusNameIsUniqueAsync(updatedStatus.Name);
+        var existing = await _repository.GetByIdAsync(id);
+        if (existing == null) return null;//TODO: Handle not found case
 
         existing.Name = updatedStatus.Name;
-        await _context.SaveChangesAsync();
+        await _repository.UpdateAsync(existing);
         return existing;
     }
-
-    public async Task<bool> DeleteStatusAsync(int id)
+    
+    private async Task ValidateStatusNameIsUniqueAsync(string name)
     {
-        var status = await _context.MembershipStatuses.FindAsync(id);
-        if (status == null) return false;
-
-        _context.MembershipStatuses.Remove(status);
-        await _context.SaveChangesAsync();
-        return true;
+        var existing = await _repository.GetByNameAsync(name);
+        if (existing != null)
+        {
+            throw new InvalidOperationException($"Membership status '{name}' already exists.");
+        }
     }
 }

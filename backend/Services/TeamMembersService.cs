@@ -58,4 +58,15 @@ public class TeamMembersService : ITeamMembersService
         await _context.SaveChangesAsync();
         return true;
     }
+
+    public async Task<bool> UpdateMembershipStatusAsync(Guid teamMemberId, int statusId)
+{
+    var teamMember = await _context.TeamMembers.
+    if (teamMember == null) return false;
+
+    teamMember.MembershipStatusId = statusId;
+    await _teamMemberRepository.UpdateAsync(teamMember);
+    return true;
+}
+
 }

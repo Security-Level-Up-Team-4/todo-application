@@ -37,4 +37,12 @@ public class TeamMembersController : ControllerBase
         var newMember = await _teamMemberService.AddTeamMemberAsync(dto);
         return CreatedAtAction(nameof(GetTeamMemberByUserId), new { userId = newMember.UserId }, newMember);
     }
+
+    [HttpPut("{teamMemberId}/status/{statusId:int}")]
+    public async Task<IActionResult> UpdateMembershipStatus(Guid teamMemberId, int statusId)
+    {
+        var updated = await _teamMemberService.UpdateMembershipStatusAsync(teamMemberId, statusId);
+        return updated ? NoContent() : NotFound();
+    }
+
 }

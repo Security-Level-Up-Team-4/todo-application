@@ -18,4 +18,16 @@ public class TeamMemberRepository : ITeamMemberRepository
         await _context.SaveChangesAsync();
         return member;
     }
+
+    public async Task<TeamMembers?> GetByIdAsync(Guid userId)
+    {
+        return await _context.TeamMembers
+            .FirstOrDefaultAsync(tm => tm.UserId == userId);
+    }
+    
+     public async Task UpdateAsync(TeamMembers teamMember)
+    {
+        _context.TeamMembers.Update(teamMember);
+        await _context.SaveChangesAsync();
+    }
 }
