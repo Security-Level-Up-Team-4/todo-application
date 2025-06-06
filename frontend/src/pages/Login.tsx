@@ -1,12 +1,9 @@
 import { Link } from "react-router-dom";
-
+import ErrorPage from "../components/ErrorPage";
 function Login() {
   return (
-    // <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
-
-    // </div>
-
     <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+      <ErrorPage />
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
         Sign in to your account
       </h2>
