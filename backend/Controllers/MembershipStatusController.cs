@@ -37,4 +37,13 @@ public class MembershipStatusController : ControllerBase
         var newStatus = await _membershipStatusService.CreateStatusAsync(statusName);
         return CreatedAtAction(nameof(GetStatusById), new { id = newStatus.Id }, newStatus);
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<MembershipStatusDto>> UpdateStatus(int id, [FromBody] string updatedStatus)
+    {
+        var existingStatus = await _membershipStatusService.UpdateStatusAsync(id, updatedStatus);
+        if (existingStatus == null)
+            return NotFound();
+        return Ok(existingStatus);
+    }
 }

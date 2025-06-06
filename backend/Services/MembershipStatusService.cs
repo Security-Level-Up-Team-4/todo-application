@@ -35,13 +35,13 @@ public class MembershipStatusService : IMembershipStatusService
         return await _repository.GetByIdAsync(id);
     }
 
-    public async Task<MembershipStatus?> UpdateStatusAsync(int id, MembershipStatusDto updatedStatus)
+    public async Task<MembershipStatus?> UpdateStatusAsync(int id, string updatedStatus)
     {
-        await ValidateStatusNameIsUniqueAsync(updatedStatus.Name);
+        await ValidateStatusNameIsUniqueAsync(updatedStatus);
         var existing = await _repository.GetByIdAsync(id);
         if (existing == null) return null;//TODO: Handle not found case
 
-        existing.Name = updatedStatus.Name;
+        existing.Name = updatedStatus;
         await _repository.UpdateAsync(existing);
         return existing;
     }
