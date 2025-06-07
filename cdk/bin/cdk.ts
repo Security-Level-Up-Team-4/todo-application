@@ -21,4 +21,7 @@ new CdkStack(app, 'TodoCdkStack-prod', {
     region: "us-east-1",
   },
   alertEmails: recipients,
+  instanceType: 't3.micro',
+  minInstances: 1,
+  maxInstances: 1,
 });
