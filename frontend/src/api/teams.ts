@@ -1,26 +1,23 @@
 import { mockTeams, type Team } from "../models/team";
 
-async function getTeams(): Promise<Team[]> {
-  // const apiBaseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
+// const apiBaseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8080"
 
-  // const response = await fetch(`${apiBaseUrl}/api/todo/timeline?id=${todoId}`, {
+async function getTeams(): Promise<Team[]> {
+  // const response = await fetch(`${apiBaseUrl}/api/teams`, {
   //   method: "GET",
   //   headers: {
   //     "Content-Type": "application/json",
   //   },
   // });
 
-  return mockTeams;
-
   // if (!response.ok) {
   //   throw new Error(`HTTP error! Status: ${response.status}`);
   // }
   // return await response.json();
+  return mockTeams;
 }
 
-async function postTeam(teamName: string): Promise<Team[]> {
-  // const apiBaseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
-
+async function addTeam(teamName: string): Promise<Team> {
   // const response = await fetch(`${apiBaseUrl}/api/teams`, {
   //   method: "POST",
   //   headers: {
@@ -33,13 +30,12 @@ async function postTeam(teamName: string): Promise<Team[]> {
   //   throw new Error(`HTTP error! Status: ${response.status}`);
   // }
   // return await response.json();
+
   console.log(teamName);
-  return mockTeams;
+  return mockTeams[0];
 }
 
 async function addUser(username: string, team: string) {
-  // const apiBaseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
-
   // const response = await fetch(`${apiBaseUrl}/api/teams/users`, {
   //   method: "PUT",
   //   headers: {
@@ -56,8 +52,6 @@ async function addUser(username: string, team: string) {
 }
 
 async function removeUsers(users: number[], team: string) {
-  // const apiBaseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
-
   // const response = await fetch(`${apiBaseUrl}/api/teams/users`, {
   //   method: "PUT",
   //   headers: {
@@ -73,5 +67,4 @@ async function removeUsers(users: number[], team: string) {
   console.log(users, team);
 }
 
-
-export { getTeams, postTeam, addUser, removeUsers };
+export { getTeams, addTeam, addUser, removeUsers };

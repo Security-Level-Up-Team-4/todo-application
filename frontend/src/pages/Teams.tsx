@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";
 import CreateTeamDialog from "../components/dialogs/CreateTeamDialog";
 import Loader from "../components/Loader";
-import { getTeams, postTeam } from "../api/teams";
+import { getTeams, addTeam } from "../api/teams";
 
 function Teams() {
   const navigate = useNavigate();
@@ -31,8 +31,9 @@ function Teams() {
 
   const handleCreateTeam = async (teamName: string) => {
     try {
-      const data = await postTeam(teamName);
-      setTeams(data);
+      setLoading(true);
+      const data = await addTeam(teamName);
+      setTeams([...teams, data]);
     } catch {
       // TODO: Show error page
     } finally {

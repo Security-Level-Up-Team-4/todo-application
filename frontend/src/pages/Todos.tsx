@@ -61,7 +61,7 @@ function Todos() {
         todoPriority,
         team ?? "0"
       );
-      setTodos(data);
+      setTodos([...todos, data]);
     } catch {
       //TODO: Show error page
     }
