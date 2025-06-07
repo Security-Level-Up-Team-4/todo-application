@@ -1,13 +1,40 @@
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { register } from "../api/register";
 function Registration() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    if (password.length < 8) {
+      alert("Password must be at least 8 characters long");
+      return;
+    }
+    
+    try {
+      await register(username, email, password);
+      navigate("/")
+    } catch {
+      // Error page
+    }
+  };
   return (
-    <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+    <section className="m-auto bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
         Create your account
       </h2>
-      <form className="space-y-5">
-        <div>
+      <form className="space-y-5" onSubmit={handleSubmit}>
+        <section>
           <label
             htmlFor="email"
             className="block text-sm font-medium text-gray-700"
@@ -19,12 +46,32 @@ function Registration() {
             id="email"
             name="email"
             autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
             placeholder="you@bbd.co.za"
           />
-        </div>
-        <div>
+        </section>
+        <section>
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Username
+          </label>
+          <input
+            type="name"
+            id="username"
+            name="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
+            placeholder="username"
+          />
+        </section>
+        <section>
           <label
             htmlFor="password"
             className="block text-sm font-medium text-gray-700"
@@ -36,12 +83,14 @@ function Registration() {
             id="password"
             name="password"
             autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
             placeholder="••••••••"
           />
-        </div>
-        <div>
+        </section>
+        <section>
           <label
             htmlFor="confirmPassword"
             className="block text-sm font-medium text-gray-700"
@@ -53,11 +102,13 @@ function Registration() {
             id="confirmPassword"
             name="confirmPassword"
             autoComplete="new-password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
             required
             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
             placeholder="••••••••"
           />
-        </div>
+        </section>
         <button
           type="submit"
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 font-semibold transition-colors"
@@ -71,7 +122,7 @@ function Registration() {
           Sign in
         </Link>
       </p>
-    </div>
+    </section>
   );
 }
 

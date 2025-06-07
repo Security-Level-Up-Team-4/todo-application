@@ -1,31 +1,55 @@
+<<<<<<< HEAD
 import { Link } from "react-router-dom";
 import ErrorPage from "../components/ErrorPage";
+=======
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { login } from "../api/apiUtils";
+>>>>>>> 3402abf06ee4a9d3ca21e39c9323ec0ed81fbc1b
 function Login() {
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      await login(username, password);
+      navigate("/teams"); // admin page if user role is admin
+    } catch {
+      // Error page
+    }
+  };
   return (
+<<<<<<< HEAD
     <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
       <ErrorPage />
+=======
+    <section className="m-auto bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+>>>>>>> 3402abf06ee4a9d3ca21e39c9323ec0ed81fbc1b
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
         Sign in to your account
       </h2>
-      <form className="space-y-5">
-        <div>
+      <form className="space-y-5" onSubmit={handleSubmit}>
+        <section>
           <label
-            htmlFor="email"
+            htmlFor="username"
             className="block text-sm font-medium text-gray-700"
           >
-            Email address
+            Username
           </label>
           <input
-            type="email"
-            id="email"
-            name="email"
-            autoComplete="email"
+            type="text"
+            id="username"
+            name="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
-            placeholder="you@example.com"
+            placeholder="username"
           />
-        </div>
-        <div>
+        </section>
+        <section>
           <label
             htmlFor="password"
             className="block text-sm font-medium text-gray-700"
@@ -37,11 +61,13 @@ function Login() {
             id="password"
             name="password"
             autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
             placeholder="••••••••"
           />
-        </div>
+        </section>
         <button
           type="submit"
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 font-semibold transition-colors"
@@ -58,7 +84,7 @@ function Login() {
           Sign up
         </Link>
       </p>
-    </div>
+    </section>
   );
 }
 
