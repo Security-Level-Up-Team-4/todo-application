@@ -5,6 +5,8 @@ import type { Todo } from "../models/todo";
 import { useEffect, useState } from "react";
 import Loader from "../components/Loader";
 import { getTodo, assignTodo, closeTodo, unassignTodo } from "../api/todos";
+import ErrorDialog from "../components/dialogs/ErrorDialog";
+import ErrorPage from "../components/ErrorPage";
 
 const TodoDetails = () => {
   const location = useLocation();
@@ -15,6 +17,8 @@ const TodoDetails = () => {
 
   const [todo, setTodo] = useState<Todo>();
   const [loading, setLoading] = useState(true);
+  const [errorPageMessage, setErrorPageMessage] = useState("");
+  const [errorDialogMessage, setErrorDialogMessage] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -22,8 +26,10 @@ const TodoDetails = () => {
       try {
         const data = await getTodo(todoId ?? "0");
         setTodo(data);
-      } catch {
-        // TODO: Show error page
+      } catch (error) {
+        setErrorPageMessage(
+          error instanceof Error ? error.message : "An unknown error occurred"
+        );
       } finally {
         setLoading(false);
       }
@@ -36,10 +42,10 @@ const TodoDetails = () => {
     try {
       const data = await assignTodo(todoId ?? "0");
       setTodo(data);
-    } catch {
-      // TODO: Show error page
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      setErrorDialogMessage(
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
     }
   };
 
@@ -47,10 +53,10 @@ const TodoDetails = () => {
     try {
       const data = await unassignTodo(todoId ?? "0");
       setTodo(data);
-    } catch {
-      // TODO: Show error page
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      setErrorDialogMessage(
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
     }
   };
 
@@ -58,10 +64,10 @@ const TodoDetails = () => {
     try {
       const data = await closeTodo(todoId ?? "0");
       setTodo(data);
-    } catch {
-      // TODO: Show error page
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      setErrorDialogMessage(
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
     }
   };
 
@@ -70,6 +76,11 @@ const TodoDetails = () => {
       <Navbar></Navbar>
       {loading ? (
         <Loader />
+      ) : errorPageMessage ? (
+        <ErrorPage
+          errorMessage={errorPageMessage}
+          errorTitle="An error has occurred"
+        />
       ) : (
         <main>
           <h2>{todo?.name}</h2>
@@ -110,6 +121,11 @@ const TodoDetails = () => {
           )}
         </main>
       )}
+      <ErrorDialog
+        errorMessage={errorDialogMessage}
+        isOpen={errorDialogMessage !== ""}
+        onClose={() => setErrorDialogMessage("")}
+      />
     </>
   );
 };

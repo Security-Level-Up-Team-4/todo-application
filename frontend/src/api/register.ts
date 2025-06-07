@@ -1,6 +1,7 @@
 const apiBaseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
 
 async function register(username: string, email: string, password: string) {
+
   const response = await fetch(`${apiBaseUrl}/api/auth/signup`, {
     method: "POST",
     headers: {
@@ -10,9 +11,10 @@ async function register(username: string, email: string, password: string) {
   });
 
   if (!response.ok) {
-    throw new Error(`HTTP error! Status: ${response.status}`);
+    const errorText = await response.text();
+    throw new Error(`Error: ${errorText ? errorText : response.status}`);
   }
-  return;
+  return await response.json();
 }
 
 export { register };

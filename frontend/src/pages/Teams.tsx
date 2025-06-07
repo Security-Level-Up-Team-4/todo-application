@@ -5,13 +5,16 @@ import { useEffect, useState } from "react";
 import CreateTeamDialog from "../components/dialogs/CreateTeamDialog";
 import Loader from "../components/Loader";
 import { getTeams, addTeam } from "../api/teams";
+import ErrorPage from "../components/ErrorPage";
+import ErrorDialog from "../components/dialogs/ErrorDialog";
 
 function Teams() {
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
   const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
+  const [errorPageMessage, setErrorPageMessage] = useState("");
+  const [errorDialogMessage, setErrorDialogMessage] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -19,8 +22,10 @@ function Teams() {
       try {
         const data = await getTeams();
         setTeams(data);
-      } catch {
-        // TODO: Show error page
+      } catch (error) {
+        setErrorPageMessage(
+          error instanceof Error ? error.message : "An unknown error occurred"
+        );
       } finally {
         setLoading(false);
       }
@@ -34,8 +39,10 @@ function Teams() {
       setLoading(true);
       const data = await addTeam(teamName);
       setTeams([...teams, data]);
-    } catch {
-      // TODO: Show error page
+    } catch (error) {
+      setErrorDialogMessage(
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
     } finally {
       setLoading(false);
     }
@@ -46,6 +53,11 @@ function Teams() {
       <Navbar />
       {loading ? (
         <Loader />
+      ) : errorPageMessage ? (
+        <ErrorPage
+          errorMessage={errorPageMessage}
+          errorTitle="An error has occurred"
+        />
       ) : (
         <main className="flex flex-col gap-8 p-4 w-full">
           <h1 className="w-full pt-4 text-center font-bold text-2xl">
@@ -74,6 +86,11 @@ function Teams() {
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         onCreateTeam={handleCreateTeam}
+      />
+      <ErrorDialog
+        errorMessage={errorDialogMessage}
+        isOpen={errorDialogMessage !== ""}
+        onClose={() => setErrorDialogMessage("")}
       />
     </>
   );

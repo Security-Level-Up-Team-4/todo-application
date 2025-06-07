@@ -10,7 +10,11 @@ import {
 async function getTodo(todoId: string): Promise<Todo> {
   // const response = await apiAuthedFetch({path: `api/todos?id=${todoId}`, method: "GET"});
   // if (!response.ok) {
-  //   throw new Error(`HTTP error! Status: ${response.status}`);
+  //   const errorText = await response
+  //     .json()
+  //     .then((data) => data.message)
+  //     .catch(() => response.status.toString());
+  //   throw new Error(`Error: ${errorText}`);
   // }
   // return await response.json();
 
@@ -22,7 +26,11 @@ async function getTodo(todoId: string): Promise<Todo> {
 async function getTodos(teamId: string): Promise<Todo[]> {
   // const response = await apiAuthedFetch({path: `api/todos?id=${teamId}`, method: "GET"});
   // if (!response.ok) {
-  //   throw new Error(`HTTP error! Status: ${response.status}`);
+  //   const errorText = await response
+  //     .json()
+  //     .then((data) => data.message)
+  //     .catch(() => response.status.toString());
+  //   throw new Error(`Error: ${errorText}`);
   // }
   // return await response.json();
 
@@ -34,7 +42,11 @@ async function getTodos(teamId: string): Promise<Todo[]> {
 async function getTodoTimeline(todoId: string): Promise<TodoTimeline> {
   // const response = await apiAuthedFetch({path: `/api/todo/timeline?id=${todoId}`, method: "GET"});
   // if (!response.ok) {
-  //   throw new Error(`HTTP error! Status: ${response.status}`);
+  //   const errorText = await response
+  //     .json()
+  //     .then((data) => data.message)
+  //     .catch(() => response.status.toString());
+  //   throw new Error(`Error: ${errorText}`);
   // }
   // return await response.json();
 
@@ -46,7 +58,11 @@ async function getTodoTimeline(todoId: string): Promise<TodoTimeline> {
 async function assignTodo(todoId: string): Promise<Todo> {
   // const response = await apiAuthedFetch({path: `/api/todo/assign?id=${todoId}`, method: "PUT"});
   // if (!response.ok) {
-  //   throw new Error(`HTTP error! Status: ${response.status}`);
+  //   const errorText = await response
+  //     .json()
+  //     .then((data) => data.message)
+  //     .catch(() => response.status.toString());
+  //   throw new Error(`Error: ${errorText}`);
   // }
   // return await response.json();
 
@@ -58,7 +74,11 @@ async function assignTodo(todoId: string): Promise<Todo> {
 async function unassignTodo(todoId: string): Promise<Todo> {
   // const response = await apiAuthedFetch({path: `/api/todo/unassign?id=${todoId}`, method: "PUT"});
   // if (!response.ok) {
-  //   throw new Error(`HTTP error! Status: ${response.status}`);
+  //   const errorText = await response
+  //     .json()
+  //     .then((data) => data.message)
+  //     .catch(() => response.status.toString());
+  //   throw new Error(`Error: ${errorText}`);
   // }
   // return await response.json();
 
@@ -70,7 +90,11 @@ async function unassignTodo(todoId: string): Promise<Todo> {
 async function closeTodo(todoId: string): Promise<Todo> {
   // const response = await apiAuthedFetch({path: `/api/todo/close?id=${todoId}`, method: "PUT"});
   // if (!response.ok) {
-  //   throw new Error(`HTTP error! Status: ${response.status}`);
+  //   const errorText = await response
+  //     .json()
+  //     .then((data) => data.message)
+  //     .catch(() => response.status.toString());
+  //   throw new Error(`Error: ${errorText}`);
   // }
   // return await response.json();
 
@@ -95,7 +119,11 @@ async function createTodo(
   //   }),
   // });
   // if (!response.ok) {
-  //   throw new Error(`HTTP error! Status: ${response.status}`);
+  //   const errorText = await response
+  //     .json()
+  //     .then((data) => data.message)
+  //     .catch(() => response.status.toString());
+  //   throw new Error(`Error: ${errorText}`);
   // }
   // return await response.json();
 

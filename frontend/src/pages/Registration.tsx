@@ -3,29 +3,34 @@ import { useState } from "react";
 import { register } from "../api/register";
 function Registration() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const username = formData.get("username") as string;
+    const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirmPassword") as string;
+
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      setErrorMessage("Passwords do not match");
       return;
     }
 
     if (password.length < 8) {
-      alert("Password must be at least 8 characters long");
+      setErrorMessage("Password must be at least 8 characters long");
       return;
     }
-    
+
     try {
       await register(username, email, password);
-      navigate("/")
-    } catch {
-      // Error page
+      navigate("/");
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
     }
   };
   return (
@@ -46,8 +51,6 @@ function Registration() {
             id="email"
             name="email"
             autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             required
             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
             placeholder="you@bbd.co.za"
@@ -61,11 +64,9 @@ function Registration() {
             Username
           </label>
           <input
-            type="name"
+            type="text"
             id="username"
             name="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
             required
             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
             placeholder="username"
@@ -83,8 +84,6 @@ function Registration() {
             id="password"
             name="password"
             autoComplete="new-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
             required
             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
             placeholder="••••••••"
@@ -102,13 +101,12 @@ function Registration() {
             id="confirmPassword"
             name="confirmPassword"
             autoComplete="new-password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
             required
             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
             placeholder="••••••••"
           />
         </section>
+        <p className="min-h-6 text-red-500">{errorMessage}</p>
         <button
           type="submit"
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 font-semibold transition-colors"
