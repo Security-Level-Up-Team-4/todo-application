@@ -30,6 +30,8 @@ function Navbar({ isAdminPage = false }: NavbarProps) {
       <button
         onClick={() => {
           //TODO clear whatever is needed to logout
+          localStorage.removeItem("username")
+          localStorage.removeItem("token")
           navigate("/");
         }}
         className="px-4 py-2 border max-w-22 w-full hover:bg-gray-200 cursor-pointer"

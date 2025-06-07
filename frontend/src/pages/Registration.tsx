@@ -1,12 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { register } from "../api/register";
 function Registration() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -17,6 +19,13 @@ function Registration() {
     if (password.length < 8) {
       alert("Password must be at least 8 characters long");
       return;
+    }
+    
+    try {
+      await register(username, email, password);
+      navigate("/")
+    } catch {
+      // Error page
     }
   };
   return (

@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";
 import CreateTeamDialog from "../components/dialogs/CreateTeamDialog";
 import Loader from "../components/Loader";
-import { getTeams, postTeam } from "../api/teams";
+import { getTeams, addTeam } from "../api/teams";
 
 function Teams() {
   const navigate = useNavigate();
@@ -31,8 +31,9 @@ function Teams() {
 
   const handleCreateTeam = async (teamName: string) => {
     try {
-      const data = await postTeam(teamName);
-      setTeams(data);
+      setLoading(true);
+      const data = await addTeam(teamName);
+      setTeams([...teams, data]);
     } catch {
       // TODO: Show error page
     } finally {
@@ -48,7 +49,7 @@ function Teams() {
       ) : (
         <main className="flex flex-col gap-8 p-4 w-full">
           <h1 className="w-full pt-4 text-center font-bold text-2xl">
-            Welcome, User
+            Welcome, {localStorage.getItem("username") ?? "User"}
           </h1>
           <section className="grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-4 w-full justify-center">
             <button
