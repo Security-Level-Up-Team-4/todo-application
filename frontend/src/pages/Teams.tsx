@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { mockTeams, type Team } from "../models/team";
+import { type Team } from "../models/team";
 import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";
 import CreateTeamDialog from "../components/dialogs/CreateTeamDialog";
@@ -19,7 +19,7 @@ function Teams() {
       try {
         const data = await getTeams();
         setTeams(data);
-      } catch (err) {
+      } catch {
         // TODO: Show error page
       } finally {
         setLoading(false);
@@ -29,19 +29,15 @@ function Teams() {
     fetchTeams();
   }, []);
 
-  const handleCreateTeam = (teamName: string) => {
-    const createTeam = async () => {
-      try {
-        const data = await postTeam(teamName);
-        setTeams(data);
-      } catch (err) {
-        // TODO: Show error page
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    createTeam();
+  const handleCreateTeam = async (teamName: string) => {
+    try {
+      const data = await postTeam(teamName);
+      setTeams(data);
+    } catch {
+      // TODO: Show error page
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

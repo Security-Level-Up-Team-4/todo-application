@@ -19,7 +19,7 @@ const Timeline = () => {
       try {
         const data = await getTodoTimeline(todoId ?? "");
         setTimeline(data);
-      } catch (err) {
+      } catch {
         // TODO: Show error page
       } finally {
         setLoading(false);
@@ -27,7 +27,7 @@ const Timeline = () => {
     };
 
     fetchTimeline();
-  }, []);
+  }, [todoId]);
 
   return (
     <>
