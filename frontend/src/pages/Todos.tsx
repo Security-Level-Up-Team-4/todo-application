@@ -1,11 +1,14 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import AddUserDialog from "../components/dialogs/AddUserDialog";
-import { useState } from "react";
-import { mockTodos } from "../models/todo";
+import { useEffect, useState } from "react";
+import { TodoStatus, type Todo } from "../models/todo";
 import CreateTodoDialog from "../components/dialogs/CreateTodoDialog";
 import RemoveUsersDialog from "../components/dialogs/RemoveUsersDialog";
 import { mockUsers } from "../models/user";
+import { addUser, removeUsers } from "../api/teams";
+import { createTodo, getTodos } from "../api/todos";
+import Loader from "../components/Loader";
 
 function Todos() {
   const navigate = useNavigate();
@@ -19,71 +22,115 @@ function Todos() {
 
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const handleAddUser = (username: string) => {
-    console.log("Adding user:", username);
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    const fetchTeams = async () => {
+      try {
+        const data = await getTodos(team ?? "0");
+        setTodos(data);
+      } catch {
+        // TODO: Show error page
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeams();
+  }, [team]);
+
+  const handleAddUser = async (username: string) => {
+    try {
+      await addUser(username, team ?? "0");
+    } catch {
+      //TODO: Show error page
+    }
   };
 
-  const handleCreateTodo = (todoName: string) => {
-    console.log("Created TOdo:", todoName);
+  const handleCreateTodo = async (
+    todoName: string,
+    todoDescription: string,
+    todoPriority: number
+  ) => {
+    try {
+      const data = await createTodo(
+        todoName,
+        todoDescription,
+        todoPriority,
+        team ?? "0"
+      );
+      setTodos(data);
+    } catch {
+      //TODO: Show error page
+    }
   };
 
-  const handleRemoveUsers = (users: number[]) => {
-    console.log("Remove users:", users);
+  const handleRemoveUsers = async (users: number[]) => {
+    try {
+      await removeUsers(users, team ?? "0");
+    } catch {
+      //TODO: Show error page
+    }
   };
   return (
     <>
       <Navbar />
-      <main className="flex flex-col gap-8 p-4 w-full">
-        <h1 className="w-full pt-4 text-center font-bold text-2xl">
-          Vodacom's To-Do list
-        </h1>
-        <section className="flex flex-wrap gap-2">
-          <select
-            className="border border-gray-300 rounded px-4 pr-4 py-2 max-w-36 w-full cursor-pointer"
-            defaultValue="in-progress"
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="all">All</option>
-
-            <option value="open">Open</option>
-            <option value="in progress">In Progress</option>
-            <option value="closed">Closed</option>
-          </select>
-          <button
-            className="px-4 py-2 border max-w-36 w-full hover:bg-gray-200 cursor-pointer"
-            onClick={() => setIsCreateTodoDialogOpen(true)}
-          >
-            New todo
-          </button>
-          <button
-            className="px-4 py-2 border max-w-36 w-full hover:bg-gray-200 cursor-pointer"
-            onClick={() => setIsAddUserDialogOpen(true)}
-          >
-            Add user
-          </button>
-          <button
-            className="px-4 py-2 border max-w-36 w-full hover:bg-gray-200 cursor-pointer"
-            onClick={() => setIsRemoveUsersDialogOpen(true)}
-          >
-            Remove users
-          </button>
-        </section>
-        <section className="flex flex-col gap-2">
-          {mockTodos
-            .filter((todo) =>
-              statusFilter === "all" ? true : todo.status === statusFilter
-            )
-            .map((todo, index) => (
-              <button
-                key={index}
-                onClick={() => navigate(`/todo?id=${todo.id}`)}
-                className="w-full p-4 shadow-lg border flex items-center justify-center hover:bg-gray-200 cursor-pointer"
-              >
-                {todo.name} - {todo.status}
-              </button>
-            ))}
-        </section>
-      </main>
+      {loading ? (
+        <Loader />
+      ) : (
+        <main className="flex flex-col gap-8 p-4 w-full">
+          <h1 className="w-full pt-4 text-center font-bold text-2xl">
+            Vodacom's To-Do list
+          </h1>
+          <section className="flex flex-wrap gap-2">
+            <select
+              className="border border-gray-300 rounded px-4 pr-4 py-2 max-w-36 w-full cursor-pointer"
+              defaultValue="in-progress"
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="all">All</option>
+              <option value={TodoStatus.OPEN}>Open</option>
+              <option value={TodoStatus.INPROGRESS}>In Progress</option>
+              <option value={TodoStatus.CLOSED}>Closed</option>
+            </select>
+            <button
+              className="px-4 py-2 border max-w-36 w-full hover:bg-gray-200 cursor-pointer"
+              onClick={() => setIsCreateTodoDialogOpen(true)}
+            >
+              New todo
+            </button>
+            <button
+              className="px-4 py-2 border max-w-36 w-full hover:bg-gray-200 cursor-pointer"
+              onClick={() => setIsAddUserDialogOpen(true)}
+            >
+              Add user
+            </button>
+            <button
+              className="px-4 py-2 border max-w-36 w-full hover:bg-gray-200 cursor-pointer"
+              onClick={() => setIsRemoveUsersDialogOpen(true)}
+            >
+              Remove users
+            </button>
+          </section>
+          <section className="flex flex-col gap-2">
+            {todos
+              .filter((todo) =>
+                statusFilter === "all" ? true : todo.status === statusFilter
+              )
+              .map((todo, index) => (
+                <button
+                  key={index}
+                  onClick={() => navigate(`/todo?id=${todo.id}`)}
+                  className="w-full p-4 shadow-lg border flex items-center justify-center hover:bg-gray-200 cursor-pointer"
+                >
+                  {todo.name} - {todo.status}
+                </button>
+              ))}
+          </section>
+        </main>
+      )}
       <AddUserDialog
         isOpen={isAddUserDialogOpen}
         onClose={() => setIsAddUserDialogOpen(false)}
