@@ -8,5 +8,5 @@ public interface ITodosRepository
     Task<Todos?> GetByIdAsync(Guid id);
     Task AddAsync(Todos todo);
     Task UpdateAsync(Todos todo);
-    Task DeleteAsync(Guid id);
+    Task<Todos?> GetByNameAsync(Guid teamId,string name);
 }

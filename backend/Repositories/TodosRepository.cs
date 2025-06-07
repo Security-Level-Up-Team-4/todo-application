@@ -1,5 +1,6 @@
 using backend.Data;
 using backend.Models;
+using backend.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories;
@@ -7,10 +8,12 @@ namespace backend.Repositories;
 public class TodosRepository : ITodosRepository
 {
     private readonly TodoContext _context;
+    public readonly ITaskStatusesRepository _taskStatusesRepository;
 
-    public TodosRepository(TodoContext context)
+    public TodosRepository(TodoContext context, ITaskStatusesRepository taskStatusesRepository)
     {
         _context = context;
+        _taskStatusesRepository = taskStatusesRepository;
     }
 
     public async Task<List<Todos>> GetAllAsync()
@@ -35,13 +38,9 @@ public class TodosRepository : ITodosRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(Guid id)
+    public Task<Todos?> GetByNameAsync(Guid teamId,string name)
     {
-        var todo = await _context.Todos.FindAsync(id);
-        if (todo != null)
-        {
-            _context.Todos.Remove(todo);
-            await _context.SaveChangesAsync();
-        }
+        var taskStatus = _taskStatusesRepository.GetByNameAsync("Open");
+        return _context.Todos.FirstOrDefaultAsync(t => t.Title == name && t.TeamId == teamId && t.StatusId == taskStatus.Id);
     }
 }
