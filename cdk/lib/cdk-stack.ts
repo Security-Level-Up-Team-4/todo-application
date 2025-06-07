@@ -182,6 +182,18 @@ export class CdkStack extends cdk.Stack {
       'Allow public access to PostgreSQL'
     );
 
+    const ebServiceRole = new iam.Role(this, 'ElasticBeanstalkServiceRole', {
+      roleName: 'aws-elasticbeanstalk-service-role',
+      assumedBy: new iam.ServicePrincipal('elasticbeanstalk.amazonaws.com'),
+    });
+
+    ebServiceRole.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName('AWSElasticBeanstalkManagedUpdatesCustomerRolePolicy')
+    );
+    ebServiceRole.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSElasticBeanstalkEnhancedHealth')
+    );
+
     const app = new elasticbeanstalk.CfnApplication(this, 'Application', {
       applicationName: 'team4-todo-api',
     });
@@ -224,7 +236,7 @@ export class CdkStack extends cdk.Stack {
         {
           namespace: 'aws:elasticbeanstalk:environment',
           optionName: 'ServiceRole',
-          value: 'aws-elasticbeanstalk-service-role',
+          value: ebServiceRole.roleArn,
         },
         {
           namespace: 'aws:elasticbeanstalk:environment:process:default',
