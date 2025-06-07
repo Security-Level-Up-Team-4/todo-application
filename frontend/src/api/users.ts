@@ -1,42 +1,27 @@
 import { mockUsers, type User } from "../models/user";
+// import { apiAuthedFetch } from "./apiUtils";
 
+// Only admin and team lead can do (Maybe return less fields for team leads?)
 async function getUsers(): Promise<User[]> {
-  // const apiBaseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
-
-  // const response = await fetch(`${apiBaseUrl}/api/users`, {
-  //   method: "GET",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  // });
-
-  console.log(mockUsers)
-  return mockUsers;
-
+  // const response = await apiAuthedFetch({path: `/api/users`, method: "GET"});
   // if (!response.ok) {
   //   throw new Error(`HTTP error! Status: ${response.status}`);
   // }
   // return await response.json();
+
+  console.log(mockUsers);
+  return mockUsers;
 }
 
-async function updateUserRole(
-  userId: number,
-  newRole: string
-): Promise<User[]> {
-  const apiBaseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
+// Only admins can do
+async function updateUserRole(userId: number, newRole: string) {
+  // const response = await apiAuthedFetch({path: `/api/users/${userId}/role`, method: "PUT", body: JSON.stringify({ role: newRole })});
 
-  const response = await fetch(`${apiBaseUrl}/api/users/${userId}/role`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ role: newRole }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! Status: ${response.status}`);
-  }
-  return await response.json();
+  // if (!response.ok) {
+  //   throw new Error(`HTTP error! Status: ${response.status}`);
+  // }
+  console.log(userId, newRole);
 }
+
 
 export { updateUserRole, getUsers };

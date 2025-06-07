@@ -1,11 +1,19 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { login } from "../api/apiUtils";
 function Login() {
-  const [email, setEmail] = useState("");
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    try {
+      await login(username, password);
+      navigate("/teams"); // admin page if user role is admin
+    } catch {
+      // Error page
+    }
   };
   return (
     <section className="m-auto bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
@@ -15,21 +23,20 @@ function Login() {
       <form className="space-y-5" onSubmit={handleSubmit}>
         <section>
           <label
-            htmlFor="email"
+            htmlFor="username"
             className="block text-sm font-medium text-gray-700"
           >
-            Email address or username
+            Username
           </label>
           <input
-            type="email"
-            id="email"
-            name="email"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            id="username"
+            name="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
-            placeholder="you@example.com or username"
+            placeholder="username"
           />
         </section>
         <section>
