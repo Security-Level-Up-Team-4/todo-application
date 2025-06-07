@@ -53,7 +53,7 @@ namespace backend.Services
             return new SignUpResponse
             {
                 Username = user.Username,
-                TotpSetupUri = $"otpauth://totp/backendName:{user.Username}?secret={user.TotpSecret}&issuer=backendName",
+                TotpSetupUri = $"otpauth://totp/TodoApp:{user.Username}?secret={user.TotpSecret}&issuer=TodoApp",
                 TempSessionToken = tempToken
             };
         }
@@ -126,7 +126,7 @@ namespace backend.Services
             user.TotpSecret = totpSecretBase32;
             await _authRepository.SaveChangesAsync();
 
-            return $"otpauth://totp/backendName:{user.Username}?secret={user.TotpSecret}&issuer=backendName";
+            return $"otpauth://totp/TodoApp:{user.Username}?secret={user.TotpSecret}&issuer=TodoApp";
         }
 
         public async Task<User?> GetUserByIdAsync(Guid userId)
