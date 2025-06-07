@@ -15,7 +15,7 @@ const AdminManagement = () => {
       try {
         const data = await getUsers();
         setUsers(data);
-      } catch (err) {
+      } catch {
         // TODO: Show error page
       } finally {
         setLoading(false);
@@ -25,13 +25,13 @@ const AdminManagement = () => {
     fetchUsers();
   }, []);
 
-  const handleRoleChange = (id: number, newRole: string) => {
+  const handleRoleChange = async (id: number, newRole: string) => {
     try {
-      updateUserRole(id, newRole);
+      await updateUserRole(id, newRole);
       setUsers((prev) =>
         prev.map((user) => (user.id === id ? { ...user, role: newRole } : user))
       );
-    } catch(err) {
+    } catch {
       //TODO: Show error page
     }
   };

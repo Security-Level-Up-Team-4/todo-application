@@ -1,7 +1,7 @@
 import { mockUsers, type User } from "../models/user";
 
 async function getUsers(): Promise<User[]> {
-  const apiBaseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
+  // const apiBaseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
 
   // const response = await fetch(`${apiBaseUrl}/api/users`, {
   //   method: "GET",
@@ -39,5 +39,4 @@ async function updateUserRole(
   return await response.json();
 }
 
-export { updateUserRole };
-export { getUsers };
+export { updateUserRole, getUsers };
