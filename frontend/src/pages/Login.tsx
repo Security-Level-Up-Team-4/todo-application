@@ -1,11 +1,6 @@
-<<<<<<< HEAD
-import { Link } from "react-router-dom";
-import ErrorPage from "../components/ErrorPage";
-=======
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { login } from "../api/apiUtils";
->>>>>>> 3402abf06ee4a9d3ca21e39c9323ec0ed81fbc1b
 function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
@@ -21,12 +16,7 @@ function Login() {
     }
   };
   return (
-<<<<<<< HEAD
-    <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
-      <ErrorPage />
-=======
     <section className="m-auto bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
->>>>>>> 3402abf06ee4a9d3ca21e39c9323ec0ed81fbc1b
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
         Sign in to your account
       </h2>
