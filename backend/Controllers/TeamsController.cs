@@ -30,11 +30,55 @@ public class TeamsController : ControllerBase
             return NotFound();
         return Ok(team);
     }
-
-    [HttpPost]
-    public async Task<ActionResult<TeamsDto>> CreateTeam(TeamsDto createDto)
+    
+    [HttpGet("user/{userId}")]
+    public async Task<ActionResult<IEnumerable<TeamsDto>>> GetAllTeamsByUserId(Guid userId)
     {
-        var newTeam = await _teamService.CreateTeamAsync(createDto);
-        return CreatedAtAction(nameof(GetTeamById), new { id = newTeam.Id }, newTeam);
+        try
+        {
+            var teams = await _teamService.GetAllTeamsByUserIdAsync(userId);
+            return Ok(teams);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpPost("{name}/user/{createdBy}")]
+    public async Task<ActionResult<TeamsDto>> CreateTeam(string name, Guid createdBy)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return BadRequest("Team name cannot be empty.");
+
+        try
+        {
+            var newTeam = await _teamService.CreateTeamAsync(name, createdBy);
+            return CreatedAtAction(nameof(GetTeamById), new { id = newTeam.Id }, newTeam);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(ex.Message);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+    [HttpPut("{id}/name/{name}")]
+    public async Task<ActionResult<TeamsDto>> UpdateTeam(Guid id, string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return BadRequest("Team name cannot be empty.");
+
+        try
+        {
+            var updatedTeam = await _teamService.UpdateTeamAsync(id, name);
+            return Ok(updatedTeam);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 }

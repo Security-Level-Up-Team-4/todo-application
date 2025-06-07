@@ -2,61 +2,80 @@ using backend.Data;
 using backend.DTOs;
 using backend.Models;
 using backend.Services;
+using backend.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Services;
 
 public class TeamsService : ITeamsService
 {
-    private readonly TodoContext _context;
+    private readonly ITeamsRepository _teamsRepository;
+    private readonly IUsersRepository _usersRepository;
 
-    public TeamsService(TodoContext context)
+    public TeamsService(ITeamsRepository teamsRepository, IUsersRepository usersRepository)
     {
-        _context = context;
+        _teamsRepository = teamsRepository;
+        _usersRepository = usersRepository;
     }
 
     public async Task<IEnumerable<Teams>> GetAllTeamsAsync()
     {
-        return await _context.Teams.ToListAsync();
+        return await _teamsRepository.GetAllAsync();
     }
 
     public async Task<Teams?> GetTeamByIdAsync(Guid id)
     {
-        return await _context.Teams.FindAsync(id);
+        return await _teamsRepository.GetByIdAsync(id);
     }
 
-    public async Task<Teams> CreateTeamAsync(TeamsDto team)
+    public Task<IEnumerable<Teams>> GetAllTeamsByUserIdAsync(Guid userId)
     {
-        var newTeam = new Teams
+        var userIdExists = _usersRepository.GetByIdAsync(userId);
+        if (userIdExists == null) throw new KeyNotFoundException($"User with ID {userId} not found.");
+        
+        return _teamsRepository.GetAllByUserIdAsync(userId);
+    }
+
+    public async Task<Teams> CreateTeamAsync(string name, Guid createdBy)
+    {
+        var existingTeam = await _teamsRepository.GetByTeamNameAsync(name);
+        if (existingTeam != null)
+        {
+            throw new InvalidOperationException($"A team with the name '{name}' already exists.");
+        }
+
+        var userExists = await _usersRepository.GetByIdAsync(createdBy);
+        if (userExists == null)
+        {
+            throw new KeyNotFoundException($"User with ID {createdBy} not found.");
+        }
+
+        var team = new Teams
         {
             Id = Guid.NewGuid(),
-            Name = team.Name,
-            CreatedBy = team.CreatedBy,
+            Name = name,
+            CreatedBy = createdBy,
             CreatedAt = DateTime.UtcNow
         };
-        _context.Teams.Add(newTeam);
-        await _context.SaveChangesAsync();
-        return newTeam;
+        return await _teamsRepository.AddAsync(team);
     }
 
-    public async Task<Teams?> UpdateTeamAsync(Guid id, TeamsDto updatedTeam)
+    public async Task<Teams?> UpdateTeamAsync(Guid id, string name)
     {
-        var existing = await _context.Teams.FindAsync(id);
-        if (existing == null) return null;
+        var existingTeam = await _teamsRepository.GetByIdAsync(id);
+        if (existingTeam == null)
+        {
+            throw new KeyNotFoundException($"Team with ID {id} not found.");
+        }
 
-        existing.Name = updatedTeam.Name;
-        existing.CreatedBy = updatedTeam.CreatedBy;
-        await _context.SaveChangesAsync();
-        return existing;
+        var teamWithSameName = await _teamsRepository.GetByTeamNameAsync(name);
+        if (teamWithSameName != null)
+        {
+            throw new InvalidOperationException($"A team with the name '{name}' already exists.");
+        }
+
+        existingTeam.Name = name;
+        return await _teamsRepository.UpdateTeamAsync(existingTeam);
     }
-
-    public async Task<bool> DeleteTeamAsync(Guid id)
-    {
-        var team = await _context.Teams.FindAsync(id);
-        if (team == null) return false;
-
-        _context.Teams.Remove(team);
-        await _context.SaveChangesAsync();
-        return true;
-    }
+    
 }

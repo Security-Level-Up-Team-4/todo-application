@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using backend.Data;
 using backend.Models;
 namespace backend.Repositories;
+
 public class TeamRepository : ITeamsRepository
 {
     private readonly TodoContext _context;
@@ -29,4 +30,23 @@ public class TeamRepository : ITeamsRepository
             await _context.SaveChangesAsync();
         }
     }
+    public async Task<IEnumerable<Teams>> GetAllByUserIdAsync(Guid userId)
+    {
+        return await _context.Teams
+            .Where(t => t.CreatedBy == userId)
+            .ToListAsync();
+    }
+    public async Task<Teams?> GetByTeamNameAsync(string teamName)
+    {
+        return await _context.Teams
+            .FirstOrDefaultAsync(t => t.Name == teamName);
+    }
+
+    public async Task<Teams?> UpdateTeamAsync(Teams team)
+    {
+        _context.Teams.Update(team);
+        await _context.SaveChangesAsync();
+        return team;
+    }
+   
 }
