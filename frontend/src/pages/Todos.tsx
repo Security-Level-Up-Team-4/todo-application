@@ -9,6 +9,8 @@ import { mockUsers } from "../models/user";
 import { addUser, removeUsers } from "../api/teams";
 import { createTodo, getTodos } from "../api/todos";
 import Loader from "../components/Loader";
+import ErrorDialog from "../components/dialogs/ErrorDialog";
+import ErrorPage from "../components/ErrorPage";
 
 function Todos() {
   const navigate = useNavigate();
@@ -24,6 +26,8 @@ function Todos() {
 
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(true);
+  const [errorPageMessage, setErrorPageMessage] = useState("");
+  const [errorDialogMessage, setErrorDialogMessage] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -31,8 +35,10 @@ function Todos() {
       try {
         const data = await getTodos(team ?? "0");
         setTodos(data);
-      } catch {
-        // TODO: Show error page
+      } catch (error) {
+        setErrorPageMessage(
+          error instanceof Error ? error.message : "An unknown error occurred"
+        );
       } finally {
         setLoading(false);
       }
@@ -44,8 +50,10 @@ function Todos() {
   const handleAddUser = async (username: string) => {
     try {
       await addUser(username, team ?? "0");
-    } catch {
-      //TODO: Show error page
+    } catch (error) {
+      setErrorDialogMessage(
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
     }
   };
 
@@ -62,16 +70,20 @@ function Todos() {
         team ?? "0"
       );
       setTodos([...todos, data]);
-    } catch {
-      //TODO: Show error page
+    } catch (error) {
+      setErrorDialogMessage(
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
     }
   };
 
   const handleRemoveUsers = async (users: number[]) => {
     try {
       await removeUsers(users, team ?? "0");
-    } catch {
-      //TODO: Show error page
+    } catch (error) {
+      setErrorDialogMessage(
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
     }
   };
   return (
@@ -79,6 +91,11 @@ function Todos() {
       <Navbar />
       {loading ? (
         <Loader />
+      ) : errorPageMessage ? (
+        <ErrorPage
+          errorMessage={errorPageMessage}
+          errorTitle="An error has occurred"
+        />
       ) : (
         <main className="flex flex-col gap-8 p-4 w-full">
           <h1 className="w-full pt-4 text-center font-bold text-2xl">
@@ -146,6 +163,11 @@ function Todos() {
         onClose={() => setIsRemoveUsersDialogOpen(false)}
         users={mockUsers}
         onRemoveUsers={handleRemoveUsers}
+      />
+      <ErrorDialog
+        errorMessage={errorDialogMessage}
+        isOpen={errorDialogMessage !== ""}
+        onClose={() => setErrorDialogMessage("")}
       />
     </>
   );
