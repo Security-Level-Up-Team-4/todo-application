@@ -9,7 +9,7 @@ import ErrorDialog from "../components/dialogs/ErrorDialog";
 const AdminManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const roles = [UserRoles.ADMIN, UserRoles.TEAMLEAD, UserRoles.TODO];
+  const roles = [{roleValue: UserRoles.ADMIN, role: "Admin"}, {roleValue: UserRoles.TEAMLEAD, role: "Team lead"}, {roleValue: UserRoles.TODO, role: "Todo User"}];
   const [errorPageMessage, setErrorPageMessage] = useState("");
   const [errorDialogMessage, setErrorDialogMessage] = useState("");
 
@@ -35,7 +35,7 @@ const AdminManagement = () => {
     try {
       await updateUserRole(id, newRole);
       setUsers((prev) =>
-        prev.map((user) => (user.id === id ? { ...user, role: newRole } : user))
+        prev.map((user) => (user.id === id ? { ...user, roleName: newRole } : user))
       );
     } catch (error) {
       setErrorDialogMessage(
@@ -75,7 +75,7 @@ const AdminManagement = () => {
                 </tr>
               </thead>
               <tbody className="bg-white sectionide-y sectionide-gray-200">
-                {users.map((user) => (
+                {users.sort((a, b) => a.username.localeCompare(b.username)).map((user) => (
                   <tr key={user.id}>
                     <td className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">
                       {user.username}
@@ -86,14 +86,14 @@ const AdminManagement = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <select
                         className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
-                        value={user.role}
+                        value={user.roleName}
                         onChange={(e) =>
                           handleRoleChange(user.id, e.target.value)
                         }
                       >
                         {roles.map((role) => (
-                          <option key={role} value={role}>
-                            {role}
+                          <option key={role.roleValue} value={role.roleValue}>
+                            {role.role}
                           </option>
                         ))}
                       </select>

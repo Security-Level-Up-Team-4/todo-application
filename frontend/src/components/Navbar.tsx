@@ -8,7 +8,7 @@ function Navbar({ isAdminPage = false }: NavbarProps) {
   const navigate = useNavigate();
 
   return (
-    <nav className="flex flex-wrap items-center justify-end gap-2 bg-gray-50 p-2 shadow-md">
+    <nav className="flex flex-wrap items-center justify-end gap-2 bg-gray-50 p-2 shadow-md mb-1">
       {!isAdminPage && (
         <>
           <button
