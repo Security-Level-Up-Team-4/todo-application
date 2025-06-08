@@ -43,4 +43,31 @@ public class UsersService : IUsersService
             RoleName = role.Name
         };
     }
+
+    public async Task<UsersDTO?> updateUserRoleAsync(Guid userId, string roleName)
+    {
+        var user =await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+        {
+            throw new KeyNotFoundException($"User with ID {userId} not found.");
+        }
+
+        var role =await _roleRepository.GetByNameAsync(roleName);
+        if (role == null)
+        {
+            throw new KeyNotFoundException($"Role '{roleName}' not found.");
+        }
+
+        user.RoleId = role.Id;
+        _userRepository.UpdateAsync(user);
+
+        return new UsersDTO
+        {
+            Id = user.Id,
+            Email = user.Email,
+            Username = user.Username,
+            RoleId = role.Id,
+            RoleName = role.Name
+        };
+    }
 }

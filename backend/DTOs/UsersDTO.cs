@@ -9,3 +9,8 @@ public class UsersDTO
     public string RoleName { get; set; } = string.Empty;
 
 }
+
+public class UpdateUserRoleDto
+{
+    public string RoleName { get; set; } = string.Empty;
+}
