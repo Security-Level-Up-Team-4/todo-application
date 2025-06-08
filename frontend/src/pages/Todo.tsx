@@ -1,7 +1,6 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { TodoStatus } from "../models/todo";
-import type { Todo } from "../models/todo";
+import { TodoStatus, type Todo } from "../models/todo";
 import { useEffect, useState } from "react";
 import Loader from "../components/Loader";
 import { getTodo, assignTodo, closeTodo, unassignTodo } from "../api/todos";
@@ -10,12 +9,13 @@ import ErrorPage from "../components/ErrorPage";
 
 const TodoDetails = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const todoId = queryParams.get("id");
 
-  const assignedToMe = true;
+  const assignedToMe = false; // TODO: Replace with real logic if needed
 
-  const [todo, setTodo] = useState<Todo>();
+  const [todo, setTodo] = useState<Todo | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [errorPageMessage, setErrorPageMessage] = useState("");
   const [errorDialogMessage, setErrorDialogMessage] = useState("");
@@ -34,7 +34,6 @@ const TodoDetails = () => {
         setLoading(false);
       }
     };
-
     fetchTodo();
   }, [todoId]);
 
@@ -73,7 +72,7 @@ const TodoDetails = () => {
 
   return (
     <>
-      <Navbar></Navbar>
+      <Navbar />
       {loading ? (
         <Loader />
       ) : errorPageMessage ? (
@@ -82,44 +81,126 @@ const TodoDetails = () => {
           errorTitle="An error has occurred"
         />
       ) : (
-        <main>
-          <h2>{todo?.name}</h2>
-          <p>{todo?.description}</p>
-          <p>Status - {todo?.status}</p>
-          <p>Priority - {todo?.priority}</p>
-          <p>
-            Created - {todo?.createdAt?.toLocaleString() /*format better*/} by{" "}
-            {todo?.createdBy}
-          </p>
-
-          <p>
-            Last updated -{" "}
-            {todo?.updatedAt
-              ? todo?.updatedAt.toLocaleString() /*format better*/
-              : todo?.createdAt.toLocaleString()}
-          </p>
-          <p></p>
-          {todo?.status === TodoStatus.OPEN && (
-            <button className="bg-amber-200" onClick={handleAssignTodo}>
-              Assign to myself
+        <div className="min-h-screen flex items-center justify-center bg-gray-100 py-10">
+          <div className="bg-white shadow-lg rounded-lg w-full max-w-3xl p-6 relative">
+            {/* View Timeline Button - Top Right */}
+            <button
+              className="absolute top-6 right-6 py-2 px-4 rounded bg-purple-500 text-white font-semibold hover:bg-purple-600 transition-colors"
+              onClick={() => todo && navigate(`/todo/timeline?id=${todo.id}`)}
+            >
+              View Timeline
             </button>
-          )}
-          {todo?.status === TodoStatus.INPROGRESS && assignedToMe ? (
-            <>
-              <button className="bg-amber-200 mr-4" onClick={handleCloseTodo}>
-                Close todo
-              </button>
-              <button className="bg-amber-200" onClick={handleUnassignTodo}>
-                Unassign from myself
-              </button>
-            </>
-          ) : (
-            <p>Assigned to - {todo?.assignedTo}</p>
-          )}
-          {todo?.status === TodoStatus.CLOSED && (
-            <p>Closed - {todo?.closedAt?.toLocaleString() /*format better*/}</p>
-          )}
-        </main>
+            {/* Header */}
+            <div className="flex items-center justify-between border-b pb-4 mb-4">
+              <div>
+                <div className="text-xl font-semibold text-gray-800">
+                  {todo?.name}
+                </div>
+                <div className="flex items-center mt-1 text-gray-500 text-sm">
+                  <span className="mr-2">
+                    {todo?.assignedTo ? (
+                      <span>
+                        Assigned to{" "}
+                        <span className="font-medium">{todo.assignedTo}</span>
+                      </span>
+                    ) : (
+                      <span>Unassigned</span>
+                    )}
+                  </span>
+                </div>
+              </div>
+            </div>
+            {/* Details Table */}
+            <div className="grid grid-cols-2 gap-4 border-b pb-4 mb-4">
+              <div>
+                <div className="text-xs text-gray-400">State</div>
+                <div className="text-sm font-medium">{todo?.status}</div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-400">Priority</div>
+                <div className="text-sm font-medium">{todo?.priority}</div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-400">Created</div>
+                <div className="text-sm font-medium">
+                  {todo?.createdAt
+                    ? new Date(todo.createdAt).toLocaleString()
+                    : "-"}{" "}
+                  by {todo?.createdBy}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-400">Last updated</div>
+                <div className="text-sm font-medium">
+                  {todo?.updatedAt
+                    ? new Date(todo.updatedAt).toLocaleString()
+                    : todo?.createdAt
+                    ? new Date(todo.createdAt).toLocaleString()
+                    : "-"}
+                </div>
+              </div>
+              {todo?.status === TodoStatus.CLOSED && (
+                <div>
+                  <div className="text-xs text-gray-400">Closed</div>
+                  <div className="text-sm font-medium">
+                    {todo?.closedAt
+                      ? new Date(todo.closedAt).toLocaleString()
+                      : "-"}
+                  </div>
+                </div>
+              )}
+            </div>
+            {/* Description and Actions */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="col-span-2">
+                <div className="text-xs text-gray-400 mb-1">Description</div>
+                {todo?.description ? (
+                  <div className="text-base text-gray-800 bg-gray-50 border border-gray-200 rounded p-3">
+                    {todo.description}
+                  </div>
+                ) : (
+                  <div className="text-base text-gray-400 italic bg-gray-50 border border-gray-200 rounded p-3">
+                    No description provided
+                  </div>
+                )}
+              </div>
+              <div>
+                <br />
+                <div className="flex flex-col gap-2">
+                  {todo?.status === TodoStatus.OPEN && (
+                    <button
+                      className="w-full py-2 px-4 rounded bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-colors"
+                      onClick={handleAssignTodo}
+                    >
+                      Assign to myself
+                    </button>
+                  )}
+                  {todo?.status === TodoStatus.INPROGRESS && assignedToMe && (
+                    <>
+                      <button
+                        className="w-full py-2 px-4 rounded bg-green-500 text-white font-semibold hover:bg-green-600 transition-colors mb-2"
+                        onClick={handleCloseTodo}
+                      >
+                        Close todo
+                      </button>
+                      <button
+                        className="w-full py-2 px-4 rounded bg-yellow-500 text-white font-semibold hover:bg-yellow-600 transition-colors"
+                        onClick={handleUnassignTodo}
+                      >
+                        Unassign from myself
+                      </button>
+                    </>
+                  )}
+                  {/* {todo?.status === TodoStatus.INPROGRESS && !assignedToMe && (
+                    <div className="text-gray-500 text-sm">
+                      Assigned to - {todo?.assignedTo}
+                    </div>
+                  )} */}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
       <ErrorDialog
         errorMessage={errorDialogMessage}

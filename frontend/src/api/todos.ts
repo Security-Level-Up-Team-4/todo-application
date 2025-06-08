@@ -19,7 +19,8 @@ async function getTodo(todoId: string): Promise<Todo> {
   // return await response.json();
 
   console.log(todoId);
-  return mockTodos[todoId ? Number(todoId) : 0];
+  return mockTodos.find(todo => todo.id === Number(todoId)) ?? mockTodos[0];
+;
 }
 
 // Both todo user and team lead can do
