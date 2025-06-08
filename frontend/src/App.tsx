@@ -8,7 +8,7 @@ import AdminManagement from "./pages/AdminManagement";
 import Timeline from "./pages/Timeline";
 import "./styles/app.css";
 import PageNotFound from "./pages/PageNotFound";
-
+import Todo from "./pages/Todo";
 function App() {
   return (
     <Routes>
@@ -19,6 +19,7 @@ function App() {
       <Route path="/admin" element={<AdminManagement />} />
       <Route path="/todo/timeline" element={<Timeline />} />
       <Route path="*" element={<PageNotFound />} />
+      <Route path="/todo" element={<Todo />} />
     </Routes>
   );
 }
