@@ -15,3 +15,17 @@ html, body {
   min-height: 100svh;
   box-sizing: border-box;
 }
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+.animate-bounce-200 {
+  animation: bounce 1s infinite;
+  animation-delay: 200ms;
+}
+
+.animate-bounce-400 {
+  animation: bounce 1s infinite;
+  animation-delay: 400ms;
+}
