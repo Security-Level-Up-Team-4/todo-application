@@ -28,6 +28,22 @@ public class UsersController : ControllerBase
         var user = await _userService.GetByIdAsync(id);
         return user == null ? NotFound() : Ok(user);
     }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserRoleDto updateUserDto)
+    {
+        if (id == Guid.Empty)
+        {
+            return BadRequest("User ID cannot be empty.");
+        }
+
+        var user = await _userService.updateUserRoleAsync(id, updateUserDto.RoleName);
+        if (user == null)
+        {
+            return NotFound();
+        }
+        return Ok(user);
+    }
 }
 
 

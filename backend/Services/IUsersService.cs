@@ -4,7 +4,8 @@ namespace backend.Services;
 
 public interface IUsersService
 {
-    Task<IEnumerable<User>> GetAllAsync();
-    Task<User?> GetByIdAsync(Guid id);
+    Task<IEnumerable<UsersDTO>> GetAllAsync();
+    Task<UsersDTO?> GetByIdAsync(Guid id);
+    Task<UsersDTO?> updateUserRoleAsync(Guid userId, string roleName);
     
 }
