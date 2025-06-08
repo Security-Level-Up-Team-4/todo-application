@@ -4,6 +4,7 @@ import { type TodoTimeline } from "../models/todo";
 import { useEffect, useState } from "react";
 import { getTodoTimeline } from "../api/todos";
 import Loader from "../components/Loader";
+import ErrorPage from "../components/ErrorPage";
 
 const Timeline = () => {
   const location = useLocation();
@@ -12,6 +13,7 @@ const Timeline = () => {
 
   const [timeline, setTimeline] = useState<TodoTimeline>();
   const [loading, setLoading] = useState(true);
+  const [errorPageMessage, setErrorPageMessage] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -19,8 +21,10 @@ const Timeline = () => {
       try {
         const data = await getTodoTimeline(todoId ?? "");
         setTimeline(data);
-      } catch {
-        // TODO: Show error page
+      } catch (error) {
+        setErrorPageMessage(
+          error instanceof Error ? error.message : "An unknown error occurred"
+        );
       } finally {
         setLoading(false);
       }
@@ -34,6 +38,11 @@ const Timeline = () => {
       <Navbar></Navbar>
       {loading ? (
         <Loader />
+      ) : errorPageMessage ? (
+        <ErrorPage
+          errorMessage={errorPageMessage}
+          errorTitle="An error has occurred"
+        />
       ) : (
         <section className="m-auto bg-gray-200 rounded-lg shadow-lg p-8 w-full max-w-2xl">
           <h2 className="text-2xl font-bold text-center mb-6 tracking-wide">
