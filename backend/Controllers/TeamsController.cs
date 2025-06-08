@@ -9,10 +9,12 @@ namespace backend.Controllers;
 public class TeamsController : ControllerBase
 {
     private readonly ITeamsService _teamService;
+    private readonly IUserContextService _userContextService;
 
-    public TeamsController(ITeamsService teamService)
+    public TeamsController(ITeamsService teamService, IUserContextService userContextService)
     {
         _teamService = teamService;
+        _userContextService = userContextService;
     }
 
     [HttpGet]
@@ -46,7 +48,7 @@ public class TeamsController : ControllerBase
     }
 
     [HttpPost("{name}/user/{createdBy}")]
-    public async Task<ActionResult<TeamsDto>> CreateTeam(string name, Guid createdBy)
+    public async Task<ActionResult<TeamsDto>> CreateTeam([FromBody]string name, Guid createdBy)
     {
         if (string.IsNullOrWhiteSpace(name))
             return BadRequest("Team name cannot be empty.");
@@ -65,14 +67,16 @@ public class TeamsController : ControllerBase
             return NotFound(ex.Message);
         }
     }
-    [HttpPut("{id}/name/{name}")]
-    public async Task<ActionResult<TeamsDto>> UpdateTeam(Guid id, string name)
+    [HttpPut("name/{name}")]
+    public async Task<ActionResult<TeamsDto>> UpdateTeam(string name)
     {
+        var test = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
         if (string.IsNullOrWhiteSpace(name))
             return BadRequest("Team name cannot be empty.");
 
         try
         {
+            var id = _userContextService.GetUserId();
             var updatedTeam = await _teamService.UpdateTeamAsync(id, name);
             return Ok(updatedTeam);
         }
