@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using backend.DTOs;
 using backend.Services;
+using System.Security.Claims;
 
 namespace backend.Controllers
 {
