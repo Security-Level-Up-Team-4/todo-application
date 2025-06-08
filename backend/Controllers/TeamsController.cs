@@ -33,7 +33,7 @@ public class TeamsController : ControllerBase
         return Ok(team);
     }
     
-    [HttpGet]
+    [HttpGet("users")]
     public async Task<ActionResult<IEnumerable<TeamsDto>>> GetAllTeamsByUserId()
     {
         try

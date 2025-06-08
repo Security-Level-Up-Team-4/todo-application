@@ -6,9 +6,9 @@ namespace backend.Repositories;
 
 public class TaskStatusesRepository : ITaskStatusesRepository
 {
-    private readonly TodoContext _context;
+    private readonly AppDbContext _context;
 
-    public TaskStatusesRepository(TodoContext context)
+    public TaskStatusesRepository(AppDbContext context)
     {
         _context = context;
     }

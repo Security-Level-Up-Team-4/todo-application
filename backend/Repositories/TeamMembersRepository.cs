@@ -6,8 +6,8 @@ namespace backend.Repositories;
 
 public class TeamMemberRepository : ITeamMemberRepository
 {
-    private readonly TodoContext _context;
-    public TeamMemberRepository(TodoContext context) => _context = context;
+    private readonly AppDbContext _context;
+    public TeamMemberRepository(AppDbContext context) => _context = context;
 
     public async Task<IEnumerable<TeamMembers>> GetAllAsync() =>
         await _context.TeamMembers.ToListAsync();
