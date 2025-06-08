@@ -191,17 +191,9 @@ const TodoDetails = () => {
                       </button>
                     </>
                   )}
-                  {todo?.status === TodoStatus.INPROGRESS && !assignedToMe && (
+                  {/* {todo?.status === TodoStatus.INPROGRESS && !assignedToMe && (
                     <div className="text-gray-500 text-sm">
                       Assigned to - {todo?.assignedTo}
-                    </div>
-                  )}
-                  {/* {todo?.status === TodoStatus.CLOSED && (
-                    <div className="text-gray-500 text-sm">
-                      Closed -{" "}
-                      {todo?.closedAt
-                        ? new Date(todo.closedAt).toLocaleString()
-                        : "-"}
                     </div>
                   )} */}
                 </div>
