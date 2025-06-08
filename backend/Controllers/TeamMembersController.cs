@@ -56,17 +56,18 @@ public class TeamMembersController : ControllerBase
         return CreatedAtAction(nameof(GetTeamMemberByUserId), new { userId = newMember.UserId }, newMember);
     }
 
-    [HttpDelete("users")]
-    public async Task<IActionResult> RemoveTeamMember(Guid teamId, Guid userId)
+    [HttpPut("users")]
+    public async Task<IActionResult> RemoveTeamMembers([FromBody] RemoveTeamMembersDto dto)
     {
-       if (teamId == Guid.Empty || userId == Guid.Empty)
+        if (dto.TeamId == Guid.Empty || dto.UserIds == null || !dto.UserIds.Any())
         {
-            throw new ArgumentException("Team ID and User ID must be provided.");
+            return BadRequest("Team ID and at least one user ID must be provided.");
         }
 
-        var removedMember = await _teamMemberService.RemoveTeamMemberAsync(teamId, userId);
-        if (removedMember == null)
-            return NotFound();
+        foreach (var userId in dto.UserIds)
+        {
+            await _teamMemberService.RemoveTeamMemberAsync(dto.TeamId, userId);
+        }
 
         return NoContent();
     }
@@ -83,7 +84,7 @@ public class TeamMembersController : ControllerBase
         return updated != null ? Ok(updated) : NotFound();
     }
 
-    [HttpGet("teams/{teamId}/users")]
+    [HttpGet("{teamId}/users")]
     public async Task<ActionResult<IEnumerable<TeamMemberDto>>> GetUsersByTeamId(Guid teamId)
     {
         if (teamId == Guid.Empty)

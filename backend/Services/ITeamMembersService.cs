@@ -11,7 +11,7 @@ public interface ITeamMembersService
     Task<TeamMembers?> AddTeamMemberAsync(string teamName, string username);
     Task<TeamMembers?> RemoveTeamMemberAsync(Guid teamId, Guid userId);
     Task<TeamMembers?> UpdateMembershipStatusAsync(Guid teamId,Guid userId, int statusId);
-    Task<List<TeamMembers>> GetUsersByTeamIdAsync(Guid teamId);
+    Task<List<TeamMemberDto>> GetUsersByTeamIdAsync(Guid teamId);
 
 
 }

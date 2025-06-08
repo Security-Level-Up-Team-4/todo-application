@@ -108,13 +108,17 @@ public class TeamMembersService : ITeamMembersService
         return teamMember;
     }
     
-    public async Task<List<TeamMembers>> GetUsersByTeamIdAsync(Guid teamId)
+    public async Task<List<TeamMemberDto>> GetUsersByTeamIdAsync(Guid teamId)
     {
         var team = await _teamsRepository.GetByIdAsync(teamId);
         if (team == null) throw new ArgumentException("Team not found");
 
         var teamMembers = await _teamMemberRepository.GetUsersByTeamIdAsync(teamId);
-        return teamMembers;
+        return teamMembers.Select(tm => new TeamMemberDto
+        {
+            UserId = tm.UserId,
+            Username = _usersRepository.GetByIdAsync(tm.UserId).Result?.Username
+        }).ToList();
         
     }
 
