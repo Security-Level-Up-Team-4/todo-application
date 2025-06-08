@@ -59,7 +59,13 @@ public class UsersService : IUsersService
         }
 
         user.RoleId = role.Id;
-        _userRepository.UpdateAsync(user);
+
+        if (user.CreatedAt.Kind == DateTimeKind.Unspecified)
+        {
+            user.CreatedAt = DateTime.SpecifyKind(user.CreatedAt, DateTimeKind.Utc);
+        }
+
+        await _userRepository.UpdateAsync(user);
 
         return new UsersDTO
         {
