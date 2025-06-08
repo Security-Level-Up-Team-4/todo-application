@@ -13,17 +13,17 @@ public class UsersRepository : IUsersRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Users>> GetAllAsync() =>
-        await _context.User.ToListAsync();
+    public async Task<IEnumerable<User>> GetAllAsync() =>
+        await _context.Users.ToListAsync();
 
-    public async Task<Users?> GetByIdAsync(Guid id) =>
-        await _context.User.FindAsync(id);
+    public async Task<User?> GetByIdAsync(Guid id) =>
+        await _context.Users.FindAsync(id);
 
-    public async Task<Users?> GetByEmailAsync(string email) =>
-        await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+    public async Task<User?> GetByEmailAsync(string email) =>
+        await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
     
-     public async Task<Users?> GetByUserNameAsync(string username) =>
-        await _context.User.FirstOrDefaultAsync(u => u.Username.ToLower().Equals(username.ToLower()));
+     public async Task<User?> GetByUserNameAsync(string username) =>
+        await _context.Users.FirstOrDefaultAsync(u => u.Username.ToLower().Equals(username.ToLower()));
 
     public async Task AddAsync(User user)
     {

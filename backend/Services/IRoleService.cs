@@ -4,7 +4,7 @@ namespace backend.Services;
 
 public interface IRolesService
 {
-    Task<IEnumerable<Roles>> GetAllRolesAsync();
-    Task<Roles?> GetRoleByIdAsync(int id);
+    Task<IEnumerable<Role>> GetAllRolesAsync();
+    Task<Role?> GetRoleByIdAsync(int id);
     Task GetRoleByNameAsync(string name);
 }

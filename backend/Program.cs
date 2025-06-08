@@ -85,6 +85,20 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
+
+
+
 builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
@@ -99,6 +113,7 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -4,7 +4,7 @@ namespace backend.Services;
 
 public interface IUsersService
 {
-    Task<IEnumerable<Users>> GetAllAsync();
-    Task<Users?> GetByIdAsync(Guid id);
+    Task<IEnumerable<User>> GetAllAsync();
+    Task<User?> GetByIdAsync(Guid id);
     
 }

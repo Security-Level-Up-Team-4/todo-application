@@ -10,14 +10,12 @@ namespace backend.Data
 
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Role> Roles { get; set; } = null!;
-        public DbSet<Roles> Role { get; set; }
     public DbSet<MembershipStatus> MembershipStatuses { get; set; }
     public DbSet<Teams> Teams { get; set; }
     public DbSet<TeamMembers> TeamMembers { get; set; }
     public DbSet<Priorities> Priorities { get; set; }
     public DbSet<TaskStatuses> TaskStatuses { get; set; }
     public DbSet<Todos> Todos { get; set; }
-    public DbSet<Users> User { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -48,14 +46,12 @@ namespace backend.Data
                 entity.Property(r => r.Name).HasColumnName("name").IsRequired();
             });
 
-            modelBuilder.Entity<Roles>().ToTable("roles");
             modelBuilder.Entity<MembershipStatus>().ToTable("membership_status");
             modelBuilder.Entity<Teams>().ToTable("teams");
             modelBuilder.Entity<TeamMembers>().ToTable("team_members");
             modelBuilder.Entity<Priorities>().ToTable("priorities");
             modelBuilder.Entity<TaskStatuses>().ToTable("todo_status");
             modelBuilder.Entity<Todos>().ToTable("todos");
-            modelBuilder.Entity<Users>().ToTable("users");
 
         }
     }
