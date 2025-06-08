@@ -1,0 +1,33 @@
+using Microsoft.EntityFrameworkCore;
+using backend.Models;
+using backend.Data;
+namespace backend.Repositories;
+
+public class MembershipStatusRepository : IMembershipStatusRepository
+{
+    private readonly TodoContext _context;
+    public MembershipStatusRepository(TodoContext context) => _context = context;
+
+    public async Task<IEnumerable<MembershipStatus>> GetAllAsync() =>
+        await _context.MembershipStatuses.ToListAsync();
+    public async Task<MembershipStatus?> GetByIdAsync(int id) =>
+        await _context.MembershipStatuses.FindAsync(id);
+
+    public async Task<MembershipStatus> AddAsync(MembershipStatus status)
+    {
+        _context.MembershipStatuses.Add(status);
+        await _context.SaveChangesAsync();
+        return status;
+    }
+
+    public async Task UpdateAsync(MembershipStatus status)
+    {
+        _context.MembershipStatuses.Update(status);
+        await _context.SaveChangesAsync();
+    }
+    public async Task<MembershipStatus?> GetByNameAsync(string name)
+    {
+        return await _context.MembershipStatuses
+            .FirstOrDefaultAsync(s => s.Name.ToLower() == name.ToLower());
+    }
+}
