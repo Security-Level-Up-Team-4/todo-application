@@ -6,9 +6,9 @@ namespace backend.Repositories;
 
 public class PrioritiesRepository : IPrioritiesRepository
 {
-    private readonly TodoContext _context;
+    private readonly AppDbContext _context;
 
-    public PrioritiesRepository(TodoContext context)
+    public PrioritiesRepository(AppDbContext context)
     {
         _context = context;
     }

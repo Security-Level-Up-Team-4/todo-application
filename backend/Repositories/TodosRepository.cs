@@ -7,10 +7,10 @@ namespace backend.Repositories;
 
 public class TodosRepository : ITodosRepository
 {
-    private readonly TodoContext _context;
+    private readonly AppDbContext _context;
     public readonly ITaskStatusesRepository _taskStatusesRepository;
 
-    public TodosRepository(TodoContext context, ITaskStatusesRepository taskStatusesRepository)
+    public TodosRepository(AppDbContext context, ITaskStatusesRepository taskStatusesRepository)
     {
         _context = context;
         _taskStatusesRepository = taskStatusesRepository;

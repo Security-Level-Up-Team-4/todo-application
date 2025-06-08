@@ -6,32 +6,32 @@ namespace backend.Repositories;
 
 public class UsersRepository : IUsersRepository
 {
-    private readonly TodoContext _context;
+    private readonly AppDbContext _context;
 
-    public UsersRepository(TodoContext context)
+    public UsersRepository(AppDbContext context)
     {
         _context = context;
     }
 
     public async Task<IEnumerable<Users>> GetAllAsync() =>
-        await _context.Users.ToListAsync();
+        await _context.User.ToListAsync();
 
     public async Task<Users?> GetByIdAsync(Guid id) =>
-        await _context.Users.FindAsync(id);
+        await _context.User.FindAsync(id);
 
     public async Task<Users?> GetByEmailAsync(string email) =>
-        await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        await _context.User.FirstOrDefaultAsync(u => u.Email == email);
     
      public async Task<Users?> GetByUserNameAsync(string username) =>
-        await _context.Users.FirstOrDefaultAsync(u => u.Username.ToLower().Equals(username.ToLower()));
+        await _context.User.FirstOrDefaultAsync(u => u.Username.ToLower().Equals(username.ToLower()));
 
-    public async Task AddAsync(Users user)
+    public async Task AddAsync(User user)
     {
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateAsync(Users user)
+    public async Task UpdateAsync(User user)
     {
         _context.Users.Update(user);
         await _context.SaveChangesAsync();

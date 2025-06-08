@@ -34,7 +34,10 @@ public class TeamMembersController : ControllerBase
     [HttpGet("{teamId}/users/{userId}")]
     public async Task<ActionResult<TeamMemberDto>> GetTeamMemberByUserId(Guid teamId, Guid userId)
     {
-        await CheckIDs(teamId, userId);
+        if (teamId == Guid.Empty || userId == Guid.Empty)
+        {
+            throw new ArgumentException("Team ID and User ID must be provided.");
+        }
 
         var member = await _teamMemberService.GetUserByTeamIdAsync(teamId, userId);
         if (member == null)
@@ -44,20 +47,22 @@ public class TeamMembersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<TeamMemberDto>> AddTeamMember([FromBody] string username , [FromBody]string teamName)
+    public async Task<ActionResult<TeamMemberDto>> AddTeamMember([FromBody] AddTeamMemberRequest request)
     {
-        
-        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(teamName))
+        if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.TeamName))
             return BadRequest("Team name or username cannot be empty.");
 
-        var newMember = await _teamMemberService.AddTeamMemberAsync(teamName, username);
+        var newMember = await _teamMemberService.AddTeamMemberAsync(request.TeamName, request.Username);
         return CreatedAtAction(nameof(GetTeamMemberByUserId), new { userId = newMember.UserId }, newMember);
     }
 
     [HttpDelete("users")]
     public async Task<IActionResult> RemoveTeamMember(Guid teamId, Guid userId)
     {
-       await CheckIDs(teamId, userId);
+       if (teamId == Guid.Empty || userId == Guid.Empty)
+        {
+            throw new ArgumentException("Team ID and User ID must be provided.");
+        }
 
         var removedMember = await _teamMemberService.RemoveTeamMemberAsync(teamId, userId);
         if (removedMember == null)
@@ -69,7 +74,10 @@ public class TeamMembersController : ControllerBase
     [HttpPut("{teamMemberId}/users/{userId}/status/{statusId:int}")]
     public async Task<IActionResult> UpdateMembershipStatus(Guid teamMemberId, Guid userId, int statusId)
     {
-        await CheckIDs(teamMemberId, userId);
+        if (teamMemberId == Guid.Empty || userId == Guid.Empty)
+        {
+            throw new ArgumentException("Team ID and User ID must be provided.");
+        }
 
         var updated = await _teamMemberService.UpdateMembershipStatusAsync(teamMemberId, userId, statusId);
         return updated != null ? Ok(updated) : NotFound();
@@ -85,13 +93,5 @@ public class TeamMembersController : ControllerBase
 
         var users = await _teamMemberService.GetUsersByTeamIdAsync(teamId);
         return Ok(users);
-    }
-
-    public async Task CheckIDs(Guid teamId, Guid userId)
-    {
-        if (teamId == Guid.Empty || userId == Guid.Empty)
-        {
-            throw new ArgumentException("Team ID and User ID must be provided.");
-        }
     }
 }

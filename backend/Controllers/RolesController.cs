@@ -29,27 +29,4 @@ public class RolesController : ControllerBase
         if (role == null) return NotFound();
         return Ok(role);
     }
-
-    [HttpPost]
-    public async Task<ActionResult> CreateRole([FromBody] string roleName)
-    {
-        if (string.IsNullOrWhiteSpace(roleName))
-        {
-            return BadRequest("Role name cannot be empty.");
-        }
-        var createdRole = await _roleService.CreateRoleAsync(roleName);
-        return CreatedAtAction(nameof(GetRoleById), new { id = createdRole.Id }, createdRole);
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateRole(int id, [FromBody] string roleName)
-    {
-        if (string.IsNullOrWhiteSpace(roleName))
-        {
-            return BadRequest("Role name cannot be empty.");
-        }
-        var updatedRole = await _roleService.UpdateRoleAsync(id, roleName);
-        if (updatedRole == null) return NotFound();
-        return Ok(updatedRole);
-    }
 }

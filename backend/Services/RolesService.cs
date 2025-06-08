@@ -23,32 +23,6 @@ public class RolesService : IRolesService
         return await _roleRepository.GetByIdAsync(id);
     }
 
-    public async Task<Roles> CreateRoleAsync(string roleName)
-    {
-       await GetRoleByNameAsync(roleName);
-        var newRole = new Roles
-        {
-            Name = roleName
-        };
-
-        return await _roleRepository.AddAsync(newRole);
-    }
-        
-
-    public async Task<Roles?> UpdateRoleAsync(int id, string roleDto)
-    {
-        var existingRole = await _roleRepository.GetByIdAsync(id);
-
-        if (existingRole == null)
-        {
-            throw new KeyNotFoundException($"Role with ID {id} not found.");
-        }
-
-        await GetRoleByNameAsync(roleDto);
-        
-        existingRole.Name = roleDto;
-        return await _roleRepository.UpdateAsync(id, roleDto);
-    }
     public async Task GetRoleByNameAsync(string name)
     {
        var roleWithSameName = await _roleRepository.GetByNameAsync(name);
