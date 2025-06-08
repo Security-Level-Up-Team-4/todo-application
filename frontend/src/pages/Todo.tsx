@@ -13,7 +13,7 @@ const TodoDetails = () => {
   const queryParams = new URLSearchParams(location.search);
   const todoId = queryParams.get("id");
 
-  const assignedToMe = true; // TODO: Replace with real logic if needed
+  const assignedToMe = false; // TODO: Replace with real logic if needed
 
   const [todo, setTodo] = useState<Todo | undefined>(undefined);
   const [loading, setLoading] = useState(true);
@@ -86,7 +86,7 @@ const TodoDetails = () => {
             {/* View Timeline Button - Top Right */}
             <button
               className="absolute top-6 right-6 py-2 px-4 rounded bg-purple-500 text-white font-semibold hover:bg-purple-600 transition-colors"
-              onClick={() => todo && navigate(`/timeline?id=${todo.id}`)}
+              onClick={() => todo && navigate(`/todo/timeline?id=${todo.id}`)}
             >
               View Timeline
             </button>
