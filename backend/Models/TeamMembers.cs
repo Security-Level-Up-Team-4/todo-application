@@ -1,17 +1,18 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace backend.Models;
 
 public class TeamMembers
 {
-    [Key]
+    [Key, Column("user_id")]
     public Guid UserId { get; set; }
 
-    [Required]
+    [Required, Column("team_id")]
     public Guid TeamId { get; set; }
 
-    [Required]
+    [Required, Column("membership_status_id")]
     public int MembershipStatusId { get; set; }
 
-    [Required]
+    [Required, Column("created_at")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

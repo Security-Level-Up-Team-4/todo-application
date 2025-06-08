@@ -33,9 +33,9 @@ public class TeamMembersService : ITeamMembersService
         return await _teamMemberRepository.GetByIdAsync(teamId);
     }
 
-    public async Task<TeamMembers?> AddTeamMemberAsync(string teamName, string username)
+    public async Task<TeamMembers?> AddTeamMemberAsync(Guid teamId, string username)
     {
-        var team = await _teamsRepository.GetByTeamNameAsync(teamName);
+        var team = await _teamsRepository.GetByIdAsync(teamId);
         if (team == null) throw new ArgumentException("Team not found");
 
         var user = await _usersRepository.GetByUserNameAsync(username);

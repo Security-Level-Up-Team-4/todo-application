@@ -31,12 +31,12 @@ public class TeamsService : ITeamsService
         return await _teamsRepository.GetByIdAsync(id);
     }
 
-    public Task<IEnumerable<Teams>> GetAllTeamsByUserIdAsync(Guid userId)
+    public async Task<IEnumerable<Teams>> GetAllTeamsByUserIdAsync(Guid userId)
     {
-        var userIdExists = _usersRepository.GetByIdAsync(userId);
+        var userIdExists = await _usersRepository.GetByIdAsync(userId);
         if (userIdExists == null) throw new KeyNotFoundException($"User with ID {userId} not found.");
         
-        return _teamsRepository.GetAllByUserIdAsync(userId);
+        return await _teamsRepository.GetAllByUserIdAsync(userId);
     }
 
     public async Task<Teams> CreateTeamAsync(string name, Guid createdBy)
@@ -62,7 +62,7 @@ public class TeamsService : ITeamsService
         };
 
         var newTeam = await _teamsRepository.AddAsync(team);
-        await _teamMembersService.AddTeamMemberAsync(newTeam.Name,userExists.Username);
+        await _teamMembersService.AddTeamMemberAsync(newTeam.Id ,userExists.Username);
 
         return newTeam;
     }
