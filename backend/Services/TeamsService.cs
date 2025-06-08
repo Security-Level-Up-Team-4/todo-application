@@ -11,12 +11,14 @@ public class TeamsService : ITeamsService
 {
     private readonly ITeamsRepository _teamsRepository;
     private readonly IUsersRepository _usersRepository;
-    
+    private readonly ITeamMembersService _teamMembersService;
 
-    public TeamsService(ITeamsRepository teamsRepository, IUsersRepository usersRepository)
+
+    public TeamsService(ITeamsRepository teamsRepository, IUsersRepository usersRepository, ITeamMembersService teamMembersService)
     {
         _teamsRepository = teamsRepository;
         _usersRepository = usersRepository;
+        _teamMembersService = teamMembersService;
     }
 
     public async Task<IEnumerable<Teams>> GetAllTeamsAsync()
@@ -58,7 +60,11 @@ public class TeamsService : ITeamsService
             CreatedBy = createdBy,
             CreatedAt = DateTime.UtcNow
         };
-        return await _teamsRepository.AddAsync(team);
+
+        var newTeam = await _teamsRepository.AddAsync(team);
+        await _teamMembersService.AddTeamMemberAsync(newTeam.Name,userExists.Username);
+
+        return newTeam;
     }
 
     public async Task<Teams?> UpdateTeamAsync(Guid id, string name)

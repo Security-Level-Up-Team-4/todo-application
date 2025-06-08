@@ -38,9 +38,15 @@ public class TodosRepository : ITodosRepository
         await _context.SaveChangesAsync();
     }
 
-    public Task<Todos?> GetByNameAsync(Guid teamId,string name)
+    public Task<Todos?> GetByNameAsync(Guid teamId, string name)
     {
         var taskStatus = _taskStatusesRepository.GetByNameAsync("Open");
         return _context.Todos.FirstOrDefaultAsync(t => t.Title == name && t.TeamId == teamId && t.StatusId == taskStatus.Id);
+    }
+
+    public Task<List<Todos>> GetByTeamIdAsync(Guid teamId)
+    {
+        var taskStatus = _taskStatusesRepository.GetByNameAsync("Open");
+        return _context.Todos.Where(t => t.TeamId == teamId /*&& t.StatusId == taskStatus.Id*/).ToListAsync();//are we fetching all or only the active ones
     }
 }

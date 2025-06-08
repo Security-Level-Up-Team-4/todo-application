@@ -33,34 +33,34 @@ public class TeamMembersService : ITeamMembersService
         return await _teamMemberRepository.GetByIdAsync(teamId);
     }
 
-    public async Task<TeamMembers?> AddTeamMemberAsync(Guid teamId, Guid userId)
+    public async Task<TeamMembers?> AddTeamMemberAsync(string teamName, string username)
     {
-        var team = await _teamsRepository.GetByIdAsync(teamId);
+        var team = await _teamsRepository.GetByTeamNameAsync(teamName);
         if (team == null) throw new ArgumentException("Team not found");
 
-        var user = await _usersRepository.GetByIdAsync(userId);
+        var user = await _usersRepository.GetByUserNameAsync(username);
         if (user == null) throw new ArgumentException("User not found");
 
         var membershipStatus = await _membershipStatusRepository.GetByNameAsync("Active");
-        var existingMember = await _teamMemberRepository.GetUserByTeamIdAsync(teamId, userId);
+        var existingMember = await _teamMemberRepository.GetUserByTeamIdAsync(team.Id, user.Id);
 
         if (existingMember != null)
         {
             if (existingMember.MembershipStatusId == membershipStatus.Id)
             {
-                throw new InvalidOperationException($"User {userId} is already a member of team {teamId}.");
+                throw new InvalidOperationException($"User {user.Id} is already a member of team {team.Id}.");
             }
             else
             {
-                return await UpdateMembershipStatusAsync(teamId, userId, membershipStatus.Id);
+                return await UpdateMembershipStatusAsync(team.Id, user.Id, membershipStatus.Id);
             }
         }
         else
         {
             var newMember = new TeamMembers
             {
-                TeamId = teamId,
-                UserId = userId,
+                TeamId = team.Id,
+                UserId = user.Id,
                 MembershipStatusId = membershipStatus.Id,
                 CreatedAt = DateTime.UtcNow,
             };

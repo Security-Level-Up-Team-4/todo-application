@@ -47,14 +47,15 @@ public class TeamsController : ControllerBase
         }
     }
 
-    [HttpPost("{name}/user/{createdBy}")]
-    public async Task<ActionResult<TeamsDto>> CreateTeam([FromBody]string name, Guid createdBy)
+    [HttpPost]
+    public async Task<ActionResult<TeamsDto>> CreateTeam([FromBody]string name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return BadRequest("Team name cannot be empty.");
 
         try
         {
+            var createdBy = _userContextService.GetUserId();
             var newTeam = await _teamService.CreateTeamAsync(name, createdBy);
             return CreatedAtAction(nameof(GetTeamById), new { id = newTeam.Id }, newTeam);
         }
@@ -70,7 +71,7 @@ public class TeamsController : ControllerBase
     [HttpPut("name/{name}")]
     public async Task<ActionResult<TeamsDto>> UpdateTeam(string name)
     {
-        var test = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+        
         if (string.IsNullOrWhiteSpace(name))
             return BadRequest("Team name cannot be empty.");
 

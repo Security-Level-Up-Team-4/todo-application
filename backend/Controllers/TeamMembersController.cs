@@ -43,16 +43,18 @@ public class TeamMembersController : ControllerBase
         return Ok(member);
     }
 
-    [HttpPost("{teamId}/users/{userId}")]
-    public async Task<ActionResult<TeamMemberDto>> AddTeamMember(Guid teamId, Guid userId)
+    [HttpPost]
+    public async Task<ActionResult<TeamMemberDto>> AddTeamMember([FromBody] string username , [FromBody]string teamName)
     {
-        await CheckIDs(teamId, userId);
+        
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(teamName))
+            return BadRequest("Team name or username cannot be empty.");
 
-        var newMember = await _teamMemberService.AddTeamMemberAsync(teamId, userId);
+        var newMember = await _teamMemberService.AddTeamMemberAsync(teamName, username);
         return CreatedAtAction(nameof(GetTeamMemberByUserId), new { userId = newMember.UserId }, newMember);
     }
 
-    [HttpDelete("{teamId}/users/{userId}")]
+    [HttpDelete("users")]
     public async Task<IActionResult> RemoveTeamMember(Guid teamId, Guid userId)
     {
        await CheckIDs(teamId, userId);
