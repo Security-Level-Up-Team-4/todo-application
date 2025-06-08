@@ -1,5 +1,6 @@
 using backend.DTOs;
 using backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers;
@@ -18,22 +19,6 @@ public class TeamsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TeamsDto>>> GetAllTeams()
-    {
-        var teams = await _teamService.GetAllTeamsAsync();
-        return Ok(teams);
-    }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<TeamsDto>> GetTeamById(Guid id)
-    {
-        var team = await _teamService.GetTeamByIdAsync(id);
-        if (team == null)
-            return NotFound();
-        return Ok(team);
-    }
-    
-    [HttpGet("users")]
     public async Task<ActionResult<IEnumerable<TeamsDto>>> GetAllTeamsByUserId()
     {
         try
@@ -48,16 +33,25 @@ public class TeamsController : ControllerBase
         }
     }
 
-    [HttpPost]
-    public async Task<ActionResult<TeamsDto>> CreateTeam([FromBody]string name)
+    [HttpGet("{id}")]
+    public async Task<ActionResult<TeamsDto>> GetTeamById(Guid id)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        var team = await _teamService.GetTeamByIdAsync(id);
+        if (team == null)
+            return NotFound();
+        return Ok(team);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<TeamsDto>> CreateTeam([FromBody] CreateTeamDto createTeamDto)
+    {
+        if (string.IsNullOrWhiteSpace(createTeamDto.Name))
             return BadRequest("Team name cannot be empty.");
 
         try
         {
             var createdBy = _userContextService.GetUserId();
-            var newTeam = await _teamService.CreateTeamAsync(name, createdBy);
+            var newTeam = await _teamService.CreateTeamAsync(createTeamDto.Name, createdBy);
             return CreatedAtAction(nameof(GetTeamById), new { id = newTeam.Id }, newTeam);
         }
         catch (InvalidOperationException ex)

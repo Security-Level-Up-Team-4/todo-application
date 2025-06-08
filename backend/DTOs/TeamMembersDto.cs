@@ -10,6 +10,6 @@ public class TeamMemberDto
 public class AddTeamMemberRequest
 {
     public string Username { get; set; } = string.Empty;
-    public string TeamName { get; set; } = string.Empty;
+    public Guid TeamId { get; set; }
 }
 
