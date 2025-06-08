@@ -18,18 +18,18 @@ namespace backend.Repositories
         public async Task<User?> GetByUsernameAsync(string username)
         {
             // return await _dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
-            return await _dbContext.Users.FirstOrDefaultAsync(u => u.Username.ToLower() == username.ToLower());
+            return await _dbContext.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Username.ToLower() == username.ToLower());
         }
 
         public async Task<User?> GetByEmailAsync(string email)
         {
             // return await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
-            return await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+            return await _dbContext.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
         }
 
         public async Task<User?> GetByIdAsync(Guid userId)
         {
-            return await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            return await _dbContext.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Id == userId);
         }
 
         public async Task AddUserAsync(User user)

@@ -88,16 +88,28 @@ namespace backend.Services
         // Gets user from temp session token, for 2FA verification
         public async Task<User?> GetUserByTempSessionTokenAsync(string tempSessionToken)
         {
-            var validationResult = _jwtService.ValidateToken(tempSessionToken);
-            if (validationResult == null || validationResult.ValidTo < DateTime.UtcNow)
-                return null;
 
-            var userIdClaim = validationResult.Principal.FindFirst("sub");
-            if (userIdClaim == null)
+            var validationResult = _jwtService.ValidateToken(tempSessionToken);
+            if (validationResult == null)
+            {
                 return null;
+            }
+
+            if (validationResult.ValidTo < DateTime.UtcNow)
+            {
+                return null;
+            }
+
+            var userIdClaim = validationResult.Principal.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                return null;
+            }
 
             if (!Guid.TryParse(userIdClaim.Value, out var userId))
+            {
                 return null;
+            }
 
             var user = await _authRepository.GetByIdAsync(userId);
             return user;
@@ -112,7 +124,7 @@ namespace backend.Services
 
         public string GenerateJwtToken(User user)
         {
-            return _jwtService.GenerateToken(user.Id.ToString(), user.Username, user.RoleId);
+            return _jwtService.GenerateToken(user.Id.ToString(), user.Username, user.Email, user.Role.Name);
         }
 
         public async Task<string?> SetupTwoFactorAsync(Guid userId)

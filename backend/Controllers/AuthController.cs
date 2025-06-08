@@ -80,7 +80,7 @@ namespace backend.Controllers
         [HttpPost("enable-2fa")]
         public async Task<IActionResult> EnableTwoFactor()
         {
-            var userIdClaim = User.FindFirst("sub");
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
                 return Unauthorized();
 

@@ -28,7 +28,8 @@ namespace backend.Services
             var expiryString = Environment.GetEnvironmentVariable("JWT_EXPIRY_MINUTES");
             _expiryMinutes = int.TryParse(expiryString, out var minutes) ? minutes : 60;
         }
-        public string GenerateToken(string userId, string username, int roleId)
+        
+        public string GenerateToken(string userId, string username, string email, string role)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -37,7 +38,8 @@ namespace backend.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sub, userId),
                 new Claim("username", username),
-                new Claim("roleId", roleId.ToString()),
+                new Claim("email", email),
+                new Claim("role", role),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 
@@ -83,7 +85,7 @@ namespace backend.Services
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
                     ValidateAudience = false,
-                    ClockSkew = TimeSpan.Zero
+                    ClockSkew = TimeSpan.FromSeconds(30)
                 }, out SecurityToken validatedToken);
 
                 return new JwtValidationResult
