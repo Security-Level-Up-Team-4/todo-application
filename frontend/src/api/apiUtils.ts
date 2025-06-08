@@ -1,7 +1,7 @@
+import { apiBaseUrl } from "../config";
 import { UserRoles } from "../models/user";
 
-let accessToken: string | null = null;
-const apiBaseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
+let accessToken: string | null = localStorage.getItem("token");
 
 type Props = {
   method: string;
@@ -61,7 +61,7 @@ export const login = async (username: string, password: string) => {
   const responseAccessToken = await response.json();
   localStorage.setItem("username", username);
   localStorage.setItem("token", responseAccessToken?.token);
-  localStorage.setItem("user-role", UserRoles.TEAMLEAD);
+  localStorage.setItem("user-role", UserRoles.ADMIN);
   accessToken = responseAccessToken?.token;
 };
 
