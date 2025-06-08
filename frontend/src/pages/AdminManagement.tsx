@@ -3,11 +3,15 @@ import Navbar from "../components/Navbar";
 import { UserRoles, type User } from "../models/user";
 import { getUsers, updateUserRole } from "../api/users";
 import Loader from "../components/Loader";
+import ErrorPage from "../components/ErrorPage";
+import ErrorDialog from "../components/dialogs/ErrorDialog";
 
 const AdminManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const roles = [UserRoles.ADMIN, UserRoles.TEAMLEAD, UserRoles.TODO];
+  const [errorPageMessage, setErrorPageMessage] = useState("");
+  const [errorDialogMessage, setErrorDialogMessage] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -15,8 +19,10 @@ const AdminManagement = () => {
       try {
         const data = await getUsers();
         setUsers(data);
-      } catch {
-        // TODO: Show error page
+      } catch (error) {
+        setErrorPageMessage(
+          error instanceof Error ? error.message : "An unknown error occurred"
+        );
       } finally {
         setLoading(false);
       }
@@ -31,8 +37,10 @@ const AdminManagement = () => {
       setUsers((prev) =>
         prev.map((user) => (user.id === id ? { ...user, role: newRole } : user))
       );
-    } catch {
-      //TODO: Show error page
+    } catch (error) {
+      setErrorDialogMessage(
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
     }
   };
 
@@ -41,6 +49,11 @@ const AdminManagement = () => {
       <Navbar isAdminPage />
       {loading ? (
         <Loader />
+      ) : errorPageMessage ? (
+        <ErrorPage
+          errorMessage={errorPageMessage}
+          errorTitle="An error has occurred"
+        />
       ) : (
         <main className="m-auto bg-white shadow-lg rounded-lg p-8 w-full max-w-3xl">
           <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
@@ -92,6 +105,11 @@ const AdminManagement = () => {
           </section>
         </main>
       )}
+      <ErrorDialog
+        errorMessage={errorDialogMessage}
+        isOpen={errorDialogMessage !== ""}
+        onClose={() => setErrorDialogMessage("")}
+      />
     </>
   );
 };

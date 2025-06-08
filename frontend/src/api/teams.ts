@@ -5,7 +5,11 @@ import { mockTeams, type Team } from "../models/team";
 async function getTeams(): Promise<Team[]> {
   // const response = await apiAuthedFetch({path: "/api/teams", method: "GET"});
   // if (!response.ok) {
-  //   throw new Error(`HTTP error! Status: ${response.status}`);
+  //   const errorText = await response
+  //     .json()
+  //     .then((data) => data.message)
+  //     .catch(() => response.status.toString());
+  //   throw new Error(`Error: ${errorText}`);
   // }
   // return await response.json();
   return mockTeams;
@@ -15,7 +19,11 @@ async function getTeams(): Promise<Team[]> {
 async function addTeam(teamName: string): Promise<Team> {
   // const response = await apiAuthedFetch({path: "/api/teams", method: "POST", body: JSON.stringify({ name: teamName })});
   // if (!response.ok) {
-  //   throw new Error(`HTTP error! Status: ${response.status}`);
+  //   const errorText = await response
+  //     .json()
+  //     .then((data) => data.message)
+  //     .catch(() => response.status.toString());
+  //   throw new Error(`Error: ${errorText}`);
   // }
   // return await response.json();
   console.log(teamName);
@@ -26,7 +34,11 @@ async function addTeam(teamName: string): Promise<Team> {
 async function addUser(username: string, team: string) {
   // const response = await apiAuthedFetch({path: "/api/teams/users", method: "PUT", body: JSON.stringify({ username, teamId: team })});
   // if (!response.ok) {
-  //   throw new Error(`HTTP error! Status: ${response.status}`);
+  //   const errorText = await response
+  //     .json()
+  //     .then((data) => data.message)
+  //     .catch(() => response.status.toString());
+  //   throw new Error(`Error: ${errorText}`);
   // }
   // return await response.json();
   console.log(username, team);
@@ -36,7 +48,11 @@ async function addUser(username: string, team: string) {
 async function removeUsers(users: number[], team: string) {
   // const response = await apiAuthedFetch({path: "/api/teams/users", method: "PUT", body: JSON.stringify({ users, teamId: team })});
   // if (!response.ok) {
-  //   throw new Error(`HTTP error! Status: ${response.status}`);
+  //   const errorText = await response
+  //     .json()
+  //     .then((data) => data.message)
+  //     .catch(() => response.status.toString());
+  //   throw new Error(`Error: ${errorText}`);
   // }
   // return await response.json();
   console.log(users, team);
