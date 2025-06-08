@@ -13,7 +13,7 @@ const TodoDetails = () => {
   const queryParams = new URLSearchParams(location.search);
   const todoId = queryParams.get("id");
 
-  const assignedToMe = true; // TODO: Replace with real logic if needed
+  const assignedToMe = false; // TODO: Replace with real logic if needed
 
   const [todo, setTodo] = useState<Todo | undefined>(undefined);
   const [loading, setLoading] = useState(true);
@@ -191,17 +191,9 @@ const TodoDetails = () => {
                       </button>
                     </>
                   )}
-                  {todo?.status === TodoStatus.INPROGRESS && !assignedToMe && (
+                  {/* {todo?.status === TodoStatus.INPROGRESS && !assignedToMe && (
                     <div className="text-gray-500 text-sm">
                       Assigned to - {todo?.assignedTo}
-                    </div>
-                  )}
-                  {/* {todo?.status === TodoStatus.CLOSED && (
-                    <div className="text-gray-500 text-sm">
-                      Closed -{" "}
-                      {todo?.closedAt
-                        ? new Date(todo.closedAt).toLocaleString()
-                        : "-"}
                     </div>
                   )} */}
                 </div>
