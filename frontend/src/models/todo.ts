@@ -21,7 +21,7 @@ export const mockTodos: Todo[] = [
   {
     id: 1,
     name: "Set up project structure",
-    status: TodoStatus.CLOSED,
+    status: TodoStatus.OPEN,
     description: "Initialize repo and base folder layout",
     priority: "low",
     createdBy: "alice",

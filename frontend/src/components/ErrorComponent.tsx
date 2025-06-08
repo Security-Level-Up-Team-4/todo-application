@@ -1,7 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const ErrorComponent = ({ errorTitle, errorMessage }) => {
+interface ErrorComponentProps {
+  errorTitle: string;
+  errorMessage: string;
+}
+
+const ErrorComponent: React.FC<ErrorComponentProps> = ({
+  errorTitle,
+  errorMessage,
+}) => {
   return (
     <div className="min-h-screen h-100 flex items-center justify-center bg-[#5656b6]">
       <div className="w-full max-w-xl bg-[#5656b6] rounded-lg flex flex-col items-center py-16 px-4">
@@ -32,4 +40,4 @@ const ErrorComponent = ({ errorTitle, errorMessage }) => {
   );
 };
 
-export default ErrorPage;
+export default ErrorComponent;
