@@ -97,6 +97,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+//role id username email roleid rname
 
 app.UseCors(MyAllowSpecificOrigins);
 
