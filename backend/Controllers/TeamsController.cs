@@ -33,11 +33,12 @@ public class TeamsController : ControllerBase
         return Ok(team);
     }
     
-    [HttpGet("user/{userId}")]
-    public async Task<ActionResult<IEnumerable<TeamsDto>>> GetAllTeamsByUserId(Guid userId)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<TeamsDto>>> GetAllTeamsByUserId()
     {
         try
         {
+            var userId = _userContextService.GetUserId();
             var teams = await _teamService.GetAllTeamsByUserIdAsync(userId);
             return Ok(teams);
         }
