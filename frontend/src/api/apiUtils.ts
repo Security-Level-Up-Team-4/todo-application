@@ -1,3 +1,5 @@
+import { UserRoles } from "../models/user";
+
 let accessToken: string | null = null;
 const apiBaseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
 
@@ -12,8 +14,8 @@ export const apiAuthedFetch = async ({
   path,
   method,
   body,
-  // retry = true,
-}: Props): Promise<Response> => {
+}: // retry = true,
+Props): Promise<Response> => {
   const res = await fetch(apiBaseUrl + path, {
     method: method,
     headers: {
@@ -39,24 +41,29 @@ export const apiAuthedFetch = async ({
   return res;
 };
 
-export const login = async(username: string, password: string) => {
+export const login = async (username: string, password: string) => {
   const response = await fetch(`${apiBaseUrl}/api/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    });
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username, password }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response
+      .json()
+      .then((data) => data.message)
+      .catch(() => response.status.toString());
+    throw new Error(`Error: ${errorText}`);
+  }
   
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    const responseAccessToken = await response.json();
-    localStorage.setItem("username", username)
-    localStorage.setItem("token", responseAccessToken?.token)
-    // set role as well
-    accessToken = responseAccessToken?.token;
-}
+  const responseAccessToken = await response.json();
+  localStorage.setItem("username", username);
+  localStorage.setItem("token", responseAccessToken?.token);
+  localStorage.setItem("user-role", UserRoles.TEAMLEAD);
+  accessToken = responseAccessToken?.token;
+};
 
 // const refreshAccessToken = async (): Promise<boolean> => {
 //   try {
