@@ -3,9 +3,9 @@ namespace backend.Repositories;
 
 public interface IRoleRepository
 {
-    Task<IEnumerable<Roles>> GetAllAsync();
-    Task<Roles?> GetByIdAsync(int id);
+    Task<IEnumerable<Role>> GetAllAsync();
+    Task<Role?> GetByIdAsync(int id);
     Task<bool> ExistsAsync(int id);
     Task SaveChangesAsync();
-    Task<Roles?> GetByNameAsync(string roleName);
+    Task<Role?> GetByNameAsync(string roleName);
 }

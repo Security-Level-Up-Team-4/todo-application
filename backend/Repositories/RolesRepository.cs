@@ -13,17 +13,17 @@ public class RoleRepository : IRoleRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Roles>> GetAllAsync() => await _context.Role.ToListAsync();
+    public async Task<IEnumerable<Role>> GetAllAsync() => await _context.Roles.ToListAsync();
 
-    public async Task<Roles?> GetByIdAsync(int id) => await _context.Role.FindAsync(id);
+    public async Task<Role?> GetByIdAsync(int id) => await _context.Roles.FindAsync(id);
 
     public async Task<bool> ExistsAsync(int id) => await _context.Roles.AnyAsync(r => r.Id == id);
 
     public async Task SaveChangesAsync() => await _context.SaveChangesAsync();
 
 
-    public async Task<Roles?> GetByNameAsync(string roleName)
+    public async Task<Role?> GetByNameAsync(string roleName)
     {
-        return await _context.Role.FirstOrDefaultAsync(r => r.Name == roleName);
+        return await _context.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
     }
 }
