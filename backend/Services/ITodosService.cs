@@ -7,7 +7,7 @@ public interface ITodosService
 {
     Task<List<Todos>> GetAllAsync();
     Task<Todos?> GetByIdAsync(Guid todoId,Guid userId);
-    Task<List<Todos>> GetByTeamIdAsync(Guid teamId,Guid userId);
+    Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId,Guid userId);
     Task AddAsync(TodosDTO dto, Guid userId,Guid teamId);
     Task<Todos?> UpdateTitleAsync(Guid todoId, string title);
     Task<Todos?> UpdateDescriptionAsync(Guid todoId, string description);

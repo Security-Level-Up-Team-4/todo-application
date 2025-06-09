@@ -49,13 +49,33 @@ public class TodosService : ITodosService
         if (teamMember == null || teamMember.MembershipStatusId == membershipStatus.Id) throw new KeyNotFoundException($"User is not a member of the team's todo.");//TODO a better exception
     }
 
-     public async Task<List<Todos>> GetByTeamIdAsync(Guid teamId, Guid userId)
-    {
-        await isATeamMember(teamId, userId);
+public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
+{
+    var team = await _teamsRepository.GetByIdAsync(teamId);
+    if (team == null)
+        return null;
 
-        var todos = await _repo.GetByTeamIdAsync(teamId);
-        return todos;
-    }
+    var todos = await _repo.GetByTeamIdAsync(teamId);
+    var teamMembers = await _teamMembersRepository.GetUsersByTeamIdAsync(teamId);
+
+    return new TeamDetailsDto
+    {
+        TeamId = team.Id,
+        TeamName = team.Name,
+        Todos = todos.Select(t => new TodosDTO
+        {
+            Title = t.Title,
+            Description = t.Description,
+            PriorityId = t.PriorityId,
+            PriorityName = _prioritiesRepository.GetByIdAsync(t.PriorityId)?.Result.Name,
+        }).ToList(),
+        Users = teamMembers.Select(tm => new UserDto
+        {
+            Id = tm.UserId,
+            Username = _usersRepository.GetByIdAsync(tm.UserId)?.Result.Username
+        }).ToList()
+    };
+}
 
     public async Task AddAsync(TodosDTO dto, Guid userId, Guid teamId)
     {
