@@ -8,6 +8,9 @@ import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as elasticbeanstalk from 'aws-cdk-lib/aws-elasticbeanstalk';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
+import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as targets from 'aws-cdk-lib/aws-route53-targets'
 
 export interface ExtendedStackProps extends cdk.StackProps {
   alertEmails: string[];
@@ -19,6 +22,11 @@ export interface ExtendedStackProps extends cdk.StackProps {
 export class CdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: ExtendedStackProps) {
     super(scope, id, props);
+
+    const acmCertificateArn = ssm.StringParameter.valueForStringParameter(
+      this,
+      `/team4-todo-api/acm-certificate-arn`
+    );
 
     const maxBudgetAmount = 50.00;
     const forecastedThresholds = [50, 75]
@@ -88,7 +96,7 @@ export class CdkStack extends cdk.Stack {
       defaultRootObject: 'index.html',
       errorResponses: [
         {
-          httpStatus: 403, 
+          httpStatus: 403,
           responseHttpStatus: 200,
           responsePagePath: '/index.html',
         },
@@ -139,7 +147,7 @@ export class CdkStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       deletionProtection: false,
     });
-    
+
     const todoRoleName = `team4-iam-role`;
     const ebInstanceRole = new iam.Role(this, todoRoleName, {
       roleName: todoRoleName,
@@ -231,7 +239,7 @@ export class CdkStack extends cdk.Stack {
         {
           namespace: 'aws:elasticbeanstalk:environment',
           optionName: 'EnvironmentType',
-          value: 'SingleInstance',
+          value: 'LoadBalanced',
         },
         {
           namespace: 'aws:elasticbeanstalk:environment',
@@ -258,7 +266,38 @@ export class CdkStack extends cdk.Stack {
           optionName: 'ELBSubnets',
           value: vpc.publicSubnets.map(subnet => subnet.subnetId).join(','),
         },
+        {
+          namespace: 'aws:elbv2:listener:443',
+          optionName: 'Protocol',
+          value: 'HTTPS',
+        },
+        {
+          namespace: 'aws:elbv2:listener:443',
+          optionName: 'SSLCertificateArns',
+          value: acmCertificateArn,
+        },
+        {
+          namespace: 'aws:elbv2:listener:443',
+          optionName: 'SSLPolicy',
+          value: 'ELBSecurityPolicy-2016-08',
+        },
       ],
+    });
+
+    const hostedZone = new route53.PublicHostedZone(this, 'TodoHostedZone', {
+      zoneName: 'secure-todo.xyz',
+    });
+
+    new route53.ARecord(this, 'AliasRecordToCloudFront', {
+      zone: hostedZone,
+      recordName: 'www',
+      target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(distribution)),
+    });
+
+    new route53.CnameRecord(this, 'EBAppCnameRecord', {
+      zone: hostedZone,
+      recordName: 'api',
+      domainName: environment.attrEndpointUrl,
     });
 
   }

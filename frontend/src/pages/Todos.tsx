@@ -39,7 +39,7 @@ function Todos() {
         const data = await getTeam(team ?? "0");
         setTodos(data?.todos ?? []);
         setUsers(data?.users ?? []);
-        setTeamName(data.name)
+        setTeamName(data.teamName)
       } catch (error) {
         setErrorPageMessage(
           error instanceof Error ? error.message : "An unknown error occurred"
@@ -161,7 +161,7 @@ function Todos() {
                   onClick={() => navigate(`/todo?id=${todo.id}`)}
                   className="w-full p-4 shadow-lg border flex items-center justify-center hover:bg-gray-200 cursor-pointer"
                 >
-                  {todo.name} - {todo.status}
+                  {todo.title} - {todo.status}
                 </button>
               ))}
           </section>

@@ -45,18 +45,25 @@ namespace backend.Controllers
             if (user == null)
                 return Unauthorized(new { message = "Invalid username or password." });
 
+
+            var tempSessionToken = _authService.GenerateTempSessionToken(user.Id);
+
             if (user.Is2faEnabled)
             {
-                var tempSessionToken = _authService.GenerateTempSessionToken(user.Id);
                 return Ok(new
                 {
                     requires2FA = true,
                     tempSessionToken
                 });
             }
-
-            var token = _authService.GenerateJwtToken(user);
-            return Ok(new { token });
+            
+            return Ok(new 
+            {
+                message = "Two-factor authentication setup required",
+                requires2FASetup = true,
+                tempSessionToken,
+                TotpSetupUri = $"otpauth://totp/TodoApp:{user.Username}?secret={user.TotpSecret}&issuer=TodoApp"
+            });
         }
         
         [HttpPost("verify-2fa")]
@@ -77,24 +84,6 @@ namespace backend.Controllers
             return Ok(new { token });
         }
 
-        [Authorize]
-        [HttpPost("enable-2fa")]
-        public async Task<IActionResult> EnableTwoFactor()
-        {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null)
-                return Unauthorized();
-
-            var userId = Guid.Parse(userIdClaim.Value);
-
-            var result = await _authService.SetupTwoFactorAsync(userId);
-            if (result == null)
-                return BadRequest("Failed to generate 2FA setup data");
-
-            return Ok(new { totpSetupUri = result });
-        }
-
-        // [Authorize]
         [HttpPost("confirm-2fa")]
         public async Task<IActionResult> ConfirmTwoFactor([FromBody] Confirm2FASetupRequest request)
         {
@@ -108,6 +97,6 @@ namespace backend.Controllers
 
             await _authService.EnableTwoFactorAsync(user.Id);
             return Ok(new { message = "2FA enabled successfully" });
-        }
+        }  
     }
 }

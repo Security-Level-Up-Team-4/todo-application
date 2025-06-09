@@ -12,6 +12,7 @@ function AddUserDialog({ isOpen, onClose, onAddUser }: AddUserDialogProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (username.trim()) {
       onAddUser?.(username.trim());
       setUsername("");
@@ -35,6 +36,7 @@ function AddUserDialog({ isOpen, onClose, onAddUser }: AddUserDialogProps) {
             type="text"
             id="username"
             value={username}
+            required
             onChange={(e) => setUsername(e.target.value)}
             className="w-full p-2 border rounded-md"
             placeholder="Enter username"
@@ -52,7 +54,9 @@ function AddUserDialog({ isOpen, onClose, onAddUser }: AddUserDialogProps) {
           <button
             type="submit"
             disabled={!username.trim()}
-            className="px-4 py-2 border w-28 hover:bg-gray-200 cursor-pointer"
+            className={`px-4 py-2 border w-28 hover:bg-gray-200 ${
+              !username.trim() ? "cursor-not-allowed" : "cursor-pointer"
+            } `}
           >
             Add User
           </button>

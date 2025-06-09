@@ -13,9 +13,20 @@ function CreateTeamDialog({
   onCreateTeam,
 }: CreateTeamDialogProps) {
   const [teamName, setTeamName] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!teamName.trim()) {
+      setErrorMessage("Team name is required")
+      return;
+    }
+    if (teamName.length > 100) {
+      setErrorMessage("Team name can be at most 100 characters")
+      return
+    }
+
     if (teamName.trim()) {
       onCreateTeam?.(teamName.trim());
       setTeamName("");
@@ -45,6 +56,7 @@ function CreateTeamDialog({
             autoFocus
           />
         </section>
+        <p className="min-h-6 text-red-500">{errorMessage}</p>
         <section className="flex flex-wrap gap-2 justify-end mt-4">
           <button
             type="button"
@@ -55,7 +67,6 @@ function CreateTeamDialog({
           </button>
           <button
             type="submit"
-            disabled={!teamName.trim()}
             className="px-4 py-2 border w-24 hover:bg-gray-200 cursor-pointer"
           >
             Create

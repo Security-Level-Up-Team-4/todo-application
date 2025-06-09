@@ -18,10 +18,30 @@ function CreateTodoDialog({
 }: CreateTodoDialogProps) {
   const [todoName, setTodoName] = useState("");
   const [todoDescription, setTodoDescription] = useState("");
-  const [todoPriority, setTodoPriority] = useState("1"); // 1 = Medium
+  const [todoPriority, setTodoPriority] = useState("1");
+  const [errorMessage, setErrorMessage] = useState("");
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!todoName.trim()) {
+      setErrorMessage("Todo name is required")
+      return;
+    }
+    if (todoName.length > 200) {
+      setErrorMessage("Todo name can be at most 200 characters")
+      return
+    }
+    if (!todoDescription.trim()) {
+      setErrorMessage("Todo description is required")
+      return;
+    }
+    if (todoDescription.length > 500) {
+      setErrorMessage("Todo description can be at most 500 characters")
+      return
+    }
+
     if (todoName.trim()) {
       onCreateTodo?.(
         todoName.trim(),
@@ -31,6 +51,7 @@ function CreateTodoDialog({
       setTodoName("");
       setTodoDescription("");
       setTodoPriority("1");
+      setErrorMessage("")
       onClose();
     }
   };
@@ -84,12 +105,13 @@ function CreateTodoDialog({
             onChange={(e) => setTodoPriority(e.target.value)}
             className="w-full p-2 border rounded-md"
           >
-            <option value="0">Low</option>
-            <option value="1">Medium</option>
-            <option value="2">High</option>
+            <option value="1">Low</option>
+            <option value="2">Medium</option>
+            <option value="3">High</option>
+            <option value="4">Critical</option>
           </select>
         </section>
-
+        <p className="min-h-6 text-red-500">{errorMessage}</p>
         <section className="flex flex-wrap gap-2 justify-end">
           <button
             type="button"
@@ -100,7 +122,6 @@ function CreateTodoDialog({
           </button>
           <button
             type="submit"
-            disabled={!todoName.trim()}
             className="px-4 py-2 border w-24 hover:bg-gray-200 cursor-pointer"
           >
             Create
