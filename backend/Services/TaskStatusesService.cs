@@ -32,7 +32,7 @@ public class TaskStatusesService : ITaskStatusesService
         {
             throw new InvalidOperationException($"Task status '{taskName}' already exists.");
         }
-        var status = new TaskStatuses { Name = taskName };
+        var status = new TaskStatuses { name = taskName };
         var created = await _repository.CreateAsync(status);
         return created;
     }
@@ -47,12 +47,12 @@ public class TaskStatusesService : ITaskStatusesService
 
 
         var nameExists = await _repository.GetByNameAsync(taskName);
-        if (nameExists != null && nameExists.Id != id)
+        if (nameExists != null && nameExists.id != id)
         {
             throw new InvalidOperationException($"Task status '{taskName}' already exists.");
         }
     
-        var status = new TaskStatuses { Name = taskName };
+        var status = new TaskStatuses { name = taskName };
         await _repository.UpdateAsync(status);
     }
 }
