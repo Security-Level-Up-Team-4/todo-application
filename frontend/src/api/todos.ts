@@ -25,15 +25,17 @@ async function getTodo(todoId: string): Promise<Todo> {
 
 // Both todo user and team lead can do
 async function getTodos(teamId: string): Promise<Todo[]> {
-  // const response = await apiAuthedFetch({path: `api/todos?id=${teamId}`, method: "GET"});
-  // if (!response.ok) {
-  //   const errorText = await response
-  //     .json()
-  //     .then((data) => data.message)
-  //     .catch(() => response.status.toString());
-  //   throw new Error(`Error: ${errorText}`);
-  // }
-  // return await response.json();
+  const response = await apiAuthedFetch({path: `api/todos?team=${teamId}`, method: "GET"});
+  if (!response.ok) {
+    const errorText = await response
+      .json()
+      .then((data) => data.message)
+      .catch(() => response.status.toString());
+    throw new Error(`Error: ${errorText}`);
+  }
+  console.log(response.json());
+
+  return await response.json();
 
   console.log(teamId);
   return mockTodos;
@@ -111,7 +113,7 @@ async function createTodo(
   team: string
 ): Promise<Todo> {
   const response = await apiAuthedFetch({
-    path: `/api/todos/{team}`,
+    path: `/api/todos/${team}`,
     method: "POST",
     body: JSON.stringify({
       name: todoName,

@@ -13,10 +13,11 @@ public class TodosService : ITodosService
     private readonly ITeamsRepository _teamsRepository;
     private readonly ITeamMemberRepository _teamMembersRepository;
     private readonly IMembershipStatusRepository _membershipStatusRepository;
+     private readonly ITeamMembersService _teamMembersService;
 
 
     public TodosService(ITodosRepository repo, ITaskStatusesRepository taskStatusesRepository, IPrioritiesRepository prioritiesRepository,
-        IUsersRepository usersRepository, ITeamsRepository teamsRepository, ITeamMemberRepository teamMembersRepository, IMembershipStatusRepository membershipStatusRepository)
+        IUsersRepository usersRepository, ITeamsRepository teamsRepository, ITeamMemberRepository teamMembersRepository, IMembershipStatusRepository membershipStatusRepository, ITeamMembersService teamMembersService)
     {
         _taskStatusesRepository = taskStatusesRepository;
         _prioritiesRepository = prioritiesRepository;
@@ -25,6 +26,7 @@ public class TodosService : ITodosService
         _teamsRepository = teamsRepository;
         _teamMembersRepository = teamMembersRepository;
         _membershipStatusRepository = membershipStatusRepository;
+        _teamMembersService = teamMembersService;
     }
 
     public async Task<List<Todos>> GetAllAsync()
@@ -51,50 +53,48 @@ public class TodosService : ITodosService
 
 public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
 {
-    var team = await _teamsRepository.GetByIdAsync(teamId);
-    if (team == null)
-        return null;
-
-    var todos = await _repo.GetByTeamIdAsync(teamId);
-    var teamMembers = await _teamMembersRepository.GetUsersByTeamIdAsync(teamId);
-
-    return new TeamDetailsDto
-    {
-        TeamId = team.Id,
-        TeamName = team.Name,
-        Todos = todos.Select(t => new TodosDTO
+        var team = await _teamsRepository.GetByIdAsync(teamId);
+        var teamMembers = await _teamMembersService.GetUsersByTeamIdAsync(teamId);
+        var todoItems = await _repo.GetByTeamIdAsync(teamId);
+        if (todoItems == null) throw new KeyNotFoundException($"No todos found for team with ID {teamId}.");
+       var  usersList = teamMembers.Select(member => new UserDto
         {
-            Title = t.Title,
-            Description = t.Description,
-            PriorityId = t.PriorityId,
-            PriorityName = _prioritiesRepository.GetByIdAsync(t.PriorityId)?.Result.Name,
-        }).ToList(),
-        Users = teamMembers.Select(tm => new UserDto
+            Id = member.Id,
+            Username = member.Username,
+        }).ToList();
+        var TodosList = todoItems.Select(todo => new TodosDTO
         {
-            Id = tm.UserId,
-            Username = _usersRepository.GetByIdAsync(tm.UserId)?.Result.Username
-        }).ToList()
-    };
+            title = todo.Title,
+            description = todo.Description,
+            priority = todo.PriorityId,
+
+        }).ToList();
+        return new TeamDetailsDto
+        {
+            TeamId = team.Id,
+            TeamName = team.Name,
+            Users = usersList,
+            Todos = TodosList
+        };  
 }
 
     public async Task AddAsync(TodosDTO dto, Guid userId, Guid teamId)
     {
-        var taskStatus = await _taskStatusesRepository.GetByNameAsync("Active");   
+        var taskStatus = await _taskStatusesRepository.GetByNameAsync("Open");   
         var user = await _usersRepository.GetByIdAsync(userId);
         if (user == null) throw new KeyNotFoundException($"User with ID {userId} not found.");
         var team = await _teamsRepository.GetByIdAsync(teamId);
         if (team == null) throw new KeyNotFoundException($"Team with ID {teamId} not found.");
-        await isATeamMember(teamId, userId);
-
+        await isATeamMember(team.Id, userId);
         var todo = new Todos
         {
-            Id = Guid.NewGuid(),
-            Title = dto.Title,
-            Description = dto.Description,
-            PriorityId = dto.PriorityId,
-            StatusId = taskStatus.Id,
+            id = Guid.NewGuid(),
+            Title = dto.title,
+            Description = dto.description,
+            PriorityId = dto.priority,
+            StatusId = taskStatus.id,
             CreatedBy = userId,
-            TeamId = teamId,
+            TeamId = team.Id,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -175,7 +175,7 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
         var todo = await CheckIfTodoExistsAsync(id);
         var taskStatus = await _taskStatusesRepository.GetByNameAsync("Active");
         
-        if (todo.StatusId == taskStatus.Id)
+        if (todo.StatusId == taskStatus.id)
             throw new InvalidOperationException("Cannot assign a todo that is not active.");
 
         var user = _usersRepository.GetByIdAsync(assignedTo);
@@ -184,7 +184,7 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
             
         await isATeamMember(todo.TeamId, assignedTo);
 
-        todo.AssignedTo = assignedTo;
+        todo.assigned_to = assignedTo;
         await _repo.UpdateAsync(todo);
 
         return todo;
@@ -201,7 +201,7 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
             
         await isATeamMember(todo.TeamId, userId);
 
-        todo.AssignedTo = null;
+        todo.assigned_to = null;
         await _repo.UpdateAsync(todo);
 
         return todo;
@@ -222,7 +222,7 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
         var todo = await CheckIfTodoExistsAsync(id);
         var status = await _taskStatusesRepository.GetByNameAsync("Closed");
 
-        todo.StatusId = status.Id;
+        todo.StatusId = status.id;
         todo.ClosedAt = DateTime.UtcNow;
         todo.UpdatedAt = DateTime.UtcNow;
 

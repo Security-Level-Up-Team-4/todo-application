@@ -49,6 +49,6 @@ public class TaskStatusesRepository : ITaskStatusesRepository
     public Task<TaskStatuses?> GetByNameAsync(string name)
     {
         return _context.TaskStatuses
-            .FirstOrDefaultAsync(ts => ts.Name.ToLower().Equals(name.ToLower()));
+            .FirstOrDefaultAsync(ts => ts.name.ToLower().Equals(name.ToLower()));
     }
 }

@@ -21,7 +21,6 @@ public class TeamMembersService : ITeamMembersService
         _usersRepository = usersRepository;
         _membershipStatusRepository = membershipStatusRepository; 
     }
-    //teamname todolist userlist
 
 
     public async Task<IEnumerable<TeamMembers>> GetAllTeamMembersAsync()
