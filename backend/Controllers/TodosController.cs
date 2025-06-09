@@ -37,9 +37,10 @@ public class TodosController : ControllerBase
         return Ok(teamDetails);
     }
 
-    [HttpPost("/{teamId:guid}")]
+    [HttpPost("{teamId:guid}")]
     public async Task<ActionResult> Create([FromBody] TodosDTO dto, Guid teamId)
     {
+
         var userId = _userContextService.GetUserId();
         await _service.AddAsync(dto, userId, teamId);
         return StatusCode(201);

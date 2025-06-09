@@ -41,9 +41,9 @@ public class TeamsService : ITeamsService
             TeamName = team.Name,
             Todos = todoItems.Select(todo => new TodosDTO
             {
-                Title = todo.Title,
-                Description = todo.Description,
-                PriorityId = todo.PriorityId,
+                title = todo.Title,
+                description = todo.Description,
+                priority = todo.PriorityId,
                 PriorityName = _prioritiesRepository.GetByIdAsync(todo.PriorityId).Result?.Name,
             }).ToList(),
             Users = teamMembers.Select(member => new UserDto
