@@ -32,12 +32,16 @@ public class TodosController : ControllerBase
         return Ok(todo);
     }
 
-     [HttpGet("teams/{id:guid}")]
-    public async Task<ActionResult> GetByTeamId(Guid teamId)
+    [HttpGet("teams/{teamId:guid}")]
+    public async Task<ActionResult<TeamDetailsDto>> GetByTeamId(Guid teamId)
     {
         var userId = _userContextService.GetUserId();
-        var todo = await _service.GetByTeamIdAsync(teamId,userId);
-        return Ok(todo);
+
+        var teamDetails = await _service.GetByTeamIdAsync(teamId, userId);
+        if (teamDetails == null)
+            return NotFound();
+
+        return Ok(teamDetails);
     }
 
     [HttpPost("/{teamId:guid}")]
