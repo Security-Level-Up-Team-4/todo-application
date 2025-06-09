@@ -116,7 +116,7 @@ async function createTodo(
     path: `/api/todos/${team}`,
     method: "POST",
     body: JSON.stringify({
-      name: todoName,
+      title: todoName,
       description: todoDescription,
       priority: todoPriority,
     }),

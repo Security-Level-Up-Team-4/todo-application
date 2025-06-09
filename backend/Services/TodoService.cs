@@ -56,6 +56,10 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
         var team = await _teamsRepository.GetByIdAsync(teamId);
         var teamMembers = await _teamMembersService.GetUsersByTeamIdAsync(teamId);
         var todoItems = await _repo.GetByTeamIdAsync(teamId);
+
+        var taskStatuses = await _taskStatusesRepository.GetAllAsync();
+        var statusMap = taskStatuses.ToDictionary(s => s.id, s => s.name);
+
         if (todoItems == null) throw new KeyNotFoundException($"No todos found for team with ID {teamId}.");
        var  usersList = teamMembers.Select(member => new UserDto
         {
@@ -64,9 +68,11 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
         }).ToList();
         var TodosList = todoItems.Select(todo => new TodosDTO
         {
+            id = todo.id,
             title = todo.Title,
             description = todo.Description,
             priority = todo.PriorityId,
+            status = statusMap.TryGetValue(todo.StatusId, out var statusName) ? statusName : "Unknown"
 
         }).ToList();
         return new TeamDetailsDto
@@ -78,9 +84,10 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
         };  
 }
 
-    public async Task AddAsync(TodosDTO dto, Guid userId, Guid teamId)
+    public async Task<TodosDTO> AddAsync(TodosDTO dto, Guid userId, Guid teamId)
     {
-        var taskStatus = await _taskStatusesRepository.GetByNameAsync("Open");   
+        var taskStatus = await _taskStatusesRepository.GetByNameAsync("Open");
+        var priority = await _prioritiesRepository.GetByIdAsync(dto.priority);
         var user = await _usersRepository.GetByIdAsync(userId);
         if (user == null) throw new KeyNotFoundException($"User with ID {userId} not found.");
         var team = await _teamsRepository.GetByIdAsync(teamId);
@@ -99,6 +106,15 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
         };
 
         await _repo.AddAsync(todo);
+        return new TodosDTO
+        {
+            id = todo.id,
+            title = todo.Title,
+            description = todo.Description,
+            priority = todo.PriorityId,
+            priorityName = priority.Name,
+            status = taskStatus.name
+        };
     }
 
     public async Task<Todos> CheckIfTodoExistsAsync(Guid id)

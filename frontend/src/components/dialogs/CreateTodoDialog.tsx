@@ -84,9 +84,10 @@ function CreateTodoDialog({
             onChange={(e) => setTodoPriority(e.target.value)}
             className="w-full p-2 border rounded-md"
           >
-            <option value="0">Low</option>
-            <option value="1">Medium</option>
-            <option value="2">High</option>
+            <option value="1">Low</option>
+            <option value="2">Medium</option>
+            <option value="3">High</option>
+            <option value="4">Critical</option>
           </select>
         </section>
 

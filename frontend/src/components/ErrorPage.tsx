@@ -5,8 +5,8 @@ type ErrorPageProps = {
 
 function ErrorPage({ errorTitle, errorMessage }: ErrorPageProps) {
   return (
-    <div className="flex-1 flex items-center justify-center">
-      <div className="w-full max-w-xl rounded-lg flex flex-col items-center py-4 px-4">
+    <section className="flex-1 flex items-center justify-center">
+      <section className="w-full max-w-xl rounded-lg flex flex-col items-center py-4 px-4">
         <h1 className="text-center text-xl font-semibold mb-6">{errorTitle}</h1>
         <p className="text-center font-semibold mb-4">{errorMessage}</p>
         <button
@@ -15,8 +15,8 @@ function ErrorPage({ errorTitle, errorMessage }: ErrorPageProps) {
         >
           Retry
         </button>
-      </div>
-    </div>
+      </section>
+    </section>
   );
 }
 

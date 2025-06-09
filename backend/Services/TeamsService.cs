@@ -44,7 +44,7 @@ public class TeamsService : ITeamsService
                 title = todo.Title,
                 description = todo.Description,
                 priority = todo.PriorityId,
-                PriorityName = _prioritiesRepository.GetByIdAsync(todo.PriorityId).Result?.Name,
+                priorityName = _prioritiesRepository.GetByIdAsync(todo.PriorityId).Result?.Name,
             }).ToList(),
             Users = teamMembers.Select(member => new UserDto
             {
