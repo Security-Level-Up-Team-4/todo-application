@@ -61,7 +61,7 @@ namespace backend.Controllers
             {
                 message = "Two-factor authentication setup required",
                 requires2FASetup = true,
-                tempSetupToken,
+                tempSessionToken,
                 TotpSetupUri = $"otpauth://totp/TodoApp:{user.Username}?secret={user.TotpSecret}&issuer=TodoApp"
             });
         }
