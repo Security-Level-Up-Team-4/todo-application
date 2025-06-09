@@ -1,6 +1,5 @@
 import {
   mockTimeline,
-  mockTodos,
   type Todo,
   type TodoTimeline,
 } from "../models/todo";
@@ -17,29 +16,7 @@ async function getTodo(todoId: string): Promise<Todo> {
     throw new Error(`Error: ${errorText}`);
   }
   return await response.json();
-
-  // console.log(todoId);
-  // return mockTodos.find(todo => todo.id === Number(todoId)) ?? mockTodos[0];
-;
 }
-
-// Both todo user and team lead can do
-// async function getTodos(teamId: string): Promise<Todo[]> {
-//   const response = await apiAuthedFetch({path: `/api/todos?team=${teamId}`, method: "GET"});
-//   if (!response.ok) {
-//     const errorText = await response
-//       .json()
-//       .then((data) => data.message)
-//       .catch(() => response.status.toString());
-//     throw new Error(`Error: ${errorText}`);
-//   }
-//   console.log(response.json());
-
-//   return await response.json();
-
-//   console.log(teamId);
-//   return mockTodos;
-// }
 
 // Both todo user and team lead can do (Have to be a member of the team that the todo belongs in)
 async function getTodoTimeline(todoId: string): Promise<TodoTimeline> {
@@ -94,9 +71,6 @@ async function closeTodo(todoId: string): Promise<Todo> {
     throw new Error(`Error: ${errorText}`);
   }
   return await response.json();
-
-  // console.log(todoId);
-  // return mockTodos[todoId ? Number(todoId) : 0];
 }
 
 // Both todo user and team lead can do
@@ -123,17 +97,10 @@ async function createTodo(
     throw new Error(`Error: ${errorText}`);
   }
   return await response.json();
-
-  console.log("Todo Name:", todoName);
-  console.log("Description:", todoDescription);
-  console.log("Priority:", todoPriority);
-  console.log("Team:", team);
-  return mockTodos[0];
 }
 
 export {
   getTodo,
-  // getTodos,
   getTodoTimeline,
   assignTodo,
   unassignTodo,

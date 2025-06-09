@@ -17,7 +17,7 @@ async function getTeams(): Promise<Team[]> {
 
 // Both todo user and team lead can do
 async function getTeam(teamId: string): Promise<Team> {
-  const response = await apiAuthedFetch({path: `/api/todos/teams/${teamId}`, method: "GET"});
+  const response = await apiAuthedFetch({path: `/api/teams/${teamId}`, method: "GET"});
   if (!response.ok) {
     const errorText = await response
       .json()
