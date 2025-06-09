@@ -64,6 +64,7 @@ function Teams() {
             Welcome, {localStorage.getItem("username") ?? "User"}
           </h1>
           <section className="grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-4 w-full justify-center">
+            {/* TODO check if user is a team lead */}
             <button
               onClick={() => setIsDialogOpen(true)}
               className="w-full h-32 shadow-lg border flex items-center justify-center hover:bg-gray-200 cursor-pointer text-9xl pb-6"

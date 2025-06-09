@@ -45,17 +45,27 @@ function RemoveUsersDialog({
     <Dialog isOpen={isOpen} onClose={handleClose} title="Remove Users">
       <form onSubmit={handleSubmit} className="space-y-4">
         <section className="max-h-60 overflow-y-auto">
-          {users.map((user) => (
-            <label key={user.id} className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={selectedUsers.includes(user.id)}
-                onChange={() => toggleUser(user.id)}
-                className="w-4 h-4"
-              />
-              <span>{user.username}</span>
-            </label>
-          ))}
+          {users.filter(
+            (user) => user.username !== localStorage.getItem("username")
+          ).length === 0 ? (
+            <p>No users have been added to this team yet</p>
+          ) : (
+            users
+              .filter(
+                (user) => user.username !== localStorage.getItem("username")
+              )
+              .map((user) => (
+                <label key={user.id} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={selectedUsers.includes(user.id)}
+                    onChange={() => toggleUser(user.id)}
+                    className="w-4 h-4"
+                  />
+                  <span>{user.username}</span>
+                </label>
+              ))
+          )}
         </section>
 
         <section className="flex justify-end space-x-2 pt-4">
