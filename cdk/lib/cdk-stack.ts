@@ -8,6 +8,7 @@ import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as elasticbeanstalk from 'aws-cdk-lib/aws-elasticbeanstalk';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
 
 export interface ExtendedStackProps extends cdk.StackProps {
   alertEmails: string[];
@@ -19,6 +20,11 @@ export interface ExtendedStackProps extends cdk.StackProps {
 export class CdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: ExtendedStackProps) {
     super(scope, id, props);
+
+    const acmCertificateArn = ssm.StringParameter.valueForStringParameter(
+      this,
+      `/team4-todo-api/acm-certificate-arn`
+    );
 
     const maxBudgetAmount = 50.00;
     const forecastedThresholds = [50, 75]
@@ -231,7 +237,7 @@ export class CdkStack extends cdk.Stack {
         {
           namespace: 'aws:elasticbeanstalk:environment',
           optionName: 'EnvironmentType',
-          value: 'SingleInstance',
+          value: 'LoadBalanced', 
         },
         {
           namespace: 'aws:elasticbeanstalk:environment',
@@ -257,6 +263,21 @@ export class CdkStack extends cdk.Stack {
           namespace: 'aws:ec2:vpc',
           optionName: 'ELBSubnets',
           value: vpc.publicSubnets.map(subnet => subnet.subnetId).join(','),
+        },
+        {
+          namespace: 'aws:elbv2:listener:443',
+          optionName: 'Protocol',
+          value: 'HTTPS',
+        },
+        {
+          namespace: 'aws:elbv2:listener:443',
+          optionName: 'SSLCertificateArns',
+          value: acmCertificateArn,
+        },
+        {
+            namespace: 'aws:elbv2:listener:443',
+            optionName: 'SSLPolicy',
+            value: 'ELBSecurityPolicy-2016-08', 
         },
       ],
     });
