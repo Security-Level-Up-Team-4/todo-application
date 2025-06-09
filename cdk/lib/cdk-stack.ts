@@ -9,6 +9,8 @@ import * as rds from 'aws-cdk-lib/aws-rds';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as elasticbeanstalk from 'aws-cdk-lib/aws-elasticbeanstalk';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
+import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as targets from 'aws-cdk-lib/aws-route53-targets'
 
 export interface ExtendedStackProps extends cdk.StackProps {
   alertEmails: string[];
@@ -94,7 +96,7 @@ export class CdkStack extends cdk.Stack {
       defaultRootObject: 'index.html',
       errorResponses: [
         {
-          httpStatus: 403, 
+          httpStatus: 403,
           responseHttpStatus: 200,
           responsePagePath: '/index.html',
         },
@@ -145,7 +147,7 @@ export class CdkStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       deletionProtection: false,
     });
-    
+
     const todoRoleName = `team4-iam-role`;
     const ebInstanceRole = new iam.Role(this, todoRoleName, {
       roleName: todoRoleName,
@@ -237,7 +239,7 @@ export class CdkStack extends cdk.Stack {
         {
           namespace: 'aws:elasticbeanstalk:environment',
           optionName: 'EnvironmentType',
-          value: 'LoadBalanced', 
+          value: 'LoadBalanced',
         },
         {
           namespace: 'aws:elasticbeanstalk:environment',
@@ -275,11 +277,27 @@ export class CdkStack extends cdk.Stack {
           value: acmCertificateArn,
         },
         {
-            namespace: 'aws:elbv2:listener:443',
-            optionName: 'SSLPolicy',
-            value: 'ELBSecurityPolicy-2016-08', 
+          namespace: 'aws:elbv2:listener:443',
+          optionName: 'SSLPolicy',
+          value: 'ELBSecurityPolicy-2016-08',
         },
       ],
+    });
+
+    const hostedZone = route53.HostedZone.fromLookup(this, 'HostedZone', {
+      domainName: 'secure-todo.xyz',
+    });
+
+    new route53.ARecord(this, 'AliasRecordToCloudFront', {
+      zone: hostedZone,
+      recordName: 'www',
+      target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(distribution)),
+    });
+
+    new route53.CnameRecord(this, 'EBAppCnameRecord', {
+      zone: hostedZone,
+      recordName: 'api',
+      domainName: environment.attrEndpointUrl,
     });
 
   }
