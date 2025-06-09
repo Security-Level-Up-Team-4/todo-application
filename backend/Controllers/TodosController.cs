@@ -42,8 +42,9 @@ public class TodosController : ControllerBase
     {
 
         var userId = _userContextService.GetUserId();
-        await _service.AddAsync(dto, userId, teamId);
-        return StatusCode(201);
+
+        var newTodo = await _service.AddAsync(dto, userId, teamId);
+        return CreatedAtAction(nameof(Create), new { id = newTodo.id }, newTodo);
     }
 
     [HttpPut("{id:guid}/title")]

@@ -81,22 +81,20 @@ const TodoDetails = () => {
           errorTitle="An error has occurred"
         />
       ) : (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100 py-10">
-          <div className="bg-white shadow-lg rounded-lg w-full max-w-3xl p-6 relative">
-            {/* View Timeline Button - Top Right */}
+        <section className="min-h-screen flex items-center justify-center bg-gray-100 py-10">
+          <section className="bg-white shadow-lg rounded-lg w-full max-w-3xl p-6 relative">
             <button
               className="absolute top-6 right-6 py-2 px-4 rounded bg-purple-500 text-white font-semibold hover:bg-purple-600 transition-colors"
               onClick={() => todo && navigate(`/todo/timeline?id=${todo.id}`)}
             >
               View Timeline
             </button>
-            {/* Header */}
-            <div className="flex items-center justify-between border-b pb-4 mb-4">
-              <div>
-                <div className="text-xl font-semibold text-gray-800">
-                  {todo?.name}
-                </div>
-                <div className="flex items-center mt-1 text-gray-500 text-sm">
+            <section className="flex items-center justify-between border-b pb-4 mb-4">
+              <section>
+                <section className="text-xl font-semibold text-gray-800">
+                  {todo?.title}
+                </section>
+                <section className="flex items-center mt-1 text-gray-500 text-sm">
                   <span className="mr-2">
                     {todo?.assignedTo ? (
                       <span>
@@ -107,66 +105,66 @@ const TodoDetails = () => {
                       <span>Unassigned</span>
                     )}
                   </span>
-                </div>
-              </div>
-            </div>
+                </section>
+              </section>
+            </section>
             {/* Details Table */}
-            <div className="grid grid-cols-2 gap-4 border-b pb-4 mb-4">
-              <div>
-                <div className="text-xs text-gray-400">State</div>
-                <div className="text-sm font-medium">{todo?.status}</div>
-              </div>
-              <div>
-                <div className="text-xs text-gray-400">Priority</div>
-                <div className="text-sm font-medium">{todo?.priority}</div>
-              </div>
-              <div>
-                <div className="text-xs text-gray-400">Created</div>
-                <div className="text-sm font-medium">
+            <section className="grid grid-cols-2 gap-4 border-b pb-4 mb-4">
+              <section>
+                <section className="text-xs text-gray-400">State</section>
+                <section className="text-sm font-medium">{todo?.status}</section>
+              </section>
+              <section>
+                <section className="text-xs text-gray-400">Priority</section>
+                <section className="text-sm font-medium">{todo?.priority}</section>
+              </section>
+              <section>
+                <section className="text-xs text-gray-400">Created</section>
+                <section className="text-sm font-medium">
                   {todo?.createdAt
                     ? new Date(todo.createdAt).toLocaleString()
                     : "-"}{" "}
                   by {todo?.createdBy}
-                </div>
-              </div>
-              <div>
-                <div className="text-xs text-gray-400">Last updated</div>
-                <div className="text-sm font-medium">
+                </section>
+              </section>
+              <section>
+                <section className="text-xs text-gray-400">Last updated</section>
+                <section className="text-sm font-medium">
                   {todo?.updatedAt
                     ? new Date(todo.updatedAt).toLocaleString()
                     : todo?.createdAt
                     ? new Date(todo.createdAt).toLocaleString()
                     : "-"}
-                </div>
-              </div>
+                </section>
+              </section>
               {todo?.status === TodoStatus.CLOSED && (
-                <div>
-                  <div className="text-xs text-gray-400">Closed</div>
-                  <div className="text-sm font-medium">
+                <section>
+                  <section className="text-xs text-gray-400">Closed</section>
+                  <section className="text-sm font-medium">
                     {todo?.closedAt
                       ? new Date(todo.closedAt).toLocaleString()
                       : "-"}
-                  </div>
-                </div>
+                  </section>
+                </section>
               )}
-            </div>
+            </section>
             {/* Description and Actions */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="col-span-2">
-                <div className="text-xs text-gray-400 mb-1">Description</div>
+            <section className="grid grid-cols-3 gap-4">
+              <section className="col-span-2">
+                <section className="text-xs text-gray-400 mb-1">Description</section>
                 {todo?.description ? (
-                  <div className="text-base text-gray-800 bg-gray-50 border border-gray-200 rounded p-3">
+                  <section className="text-base text-gray-800 bg-gray-50 border border-gray-200 rounded p-3">
                     {todo.description}
-                  </div>
+                  </section>
                 ) : (
-                  <div className="text-base text-gray-400 italic bg-gray-50 border border-gray-200 rounded p-3">
+                  <section className="text-base text-gray-400 italic bg-gray-50 border border-gray-200 rounded p-3">
                     No description provided
-                  </div>
+                  </section>
                 )}
-              </div>
-              <div>
+              </section>
+              <section>
                 <br />
-                <div className="flex flex-col gap-2">
+                <section className="flex flex-col gap-2">
                   {todo?.status === TodoStatus.OPEN && (
                     <button
                       className="w-full py-2 px-4 rounded bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-colors"
@@ -191,16 +189,11 @@ const TodoDetails = () => {
                       </button>
                     </>
                   )}
-                  {/* {todo?.status === TodoStatus.INPROGRESS && !assignedToMe && (
-                    <div className="text-gray-500 text-sm">
-                      Assigned to - {todo?.assignedTo}
-                    </div>
-                  )} */}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+                </section>
+              </section>
+            </section>
+          </section>
+        </section>
       )}
       <ErrorDialog
         errorMessage={errorDialogMessage}

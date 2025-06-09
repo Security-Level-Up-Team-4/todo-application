@@ -6,10 +6,11 @@ export enum TodoStatus {
 
 export interface Todo {
   id: number;
-  name: string;
+  title: string;
   status: string;
   description: string;
   priority: string;
+  priorityName?: string;
   createdBy: string;
   assignedTo?: string;
   createdAt: Date;
@@ -20,10 +21,11 @@ export interface Todo {
 export const mockTodos: Todo[] = [
   {
     id: 1,
-    name: "Set up project structure",
+    title: "Set up project structure",
     status: TodoStatus.OPEN,
     description: "Initialize repo and base folder layout",
-    priority: "low",
+    priority: "1",
+    priorityName: "Low",
     createdBy: "alice",
     createdAt: new Date("2025-06-01T09:00:00Z"),
     updatedAt: new Date("2025-06-01T10:00:00Z"),
@@ -31,10 +33,11 @@ export const mockTodos: Todo[] = [
   },
   {
     id: 2,
-    name: "Design login screen",
+    title: "Design login screen",
     status: TodoStatus.INPROGRESS,
     description: "Create wireframe and UI for login",
-    priority: "medium",
+    priority: "2",
+    priorityName: "Medium",
     createdBy: "carol",
     assignedTo: "dave",
     createdAt: new Date("2025-06-02T14:30:00Z"),
@@ -42,19 +45,21 @@ export const mockTodos: Todo[] = [
   },
   {
     id: 3,
-    name: "Implement API endpoints",
+    title: "Implement API endpoints",
     status: TodoStatus.OPEN,
     description: "Create Express routes for authentication",
-    priority: "high",
+    priority: "3",
+    priorityName: "High",
     createdBy: "eve",
     createdAt: new Date("2025-06-03T08:00:00Z"),
   },
   {
     id: 4,
-    name: "Test user registration",
+    title: "Test user registration",
     status: TodoStatus.CLOSED,
     description: "Write unit tests for signup flow",
-    priority: "medium",
+    priority: "4",
+    priorityName: "Critical",
     createdBy: "alice",
     assignedTo: "bob",
     createdAt: new Date("2025-06-04T12:00:00Z"),
@@ -63,10 +68,11 @@ export const mockTodos: Todo[] = [
   },
   {
     id: 5,
-    name: "Deploy to staging",
+    title: "Deploy to staging",
     status: TodoStatus.INPROGRESS,
     description: "Push build to AWS and verify deployment",
-    priority: "high",
+    priority: "1",
+    priorityName: "Low",
     createdBy: "carol",
     assignedTo: "bob",
     createdAt: new Date("2025-06-04T15:45:00Z"),
