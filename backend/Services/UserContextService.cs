@@ -16,7 +16,7 @@ public Guid GetUserId()
                       ?? user?.FindFirst("sub");
 
     if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
-        throw new UnauthorizedAccessException("User ID claim is missing or invalid.");
+        throw new UnauthorizedAccessException("401: Unauthorized - You need to login");
 
     return userId;
 }

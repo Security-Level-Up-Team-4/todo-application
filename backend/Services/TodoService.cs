@@ -68,7 +68,13 @@ public class TodosService : ITodosService
 public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
 {
         var team = await _teamsRepository.GetByIdAsync(teamId);
+        if (team == null)
+            return null;
+
         var teamMembers = await _teamMembersService.GetUsersByTeamIdAsync(teamId);
+        if (!teamMembers.Any(m => m.Id == userId))
+            throw new KeyNotFoundException("User is not a member of this team.");
+
         var todoItems = await _repo.GetByTeamIdAsync(teamId);
 
         var taskStatuses = await _taskStatusesRepository.GetAllAsync();

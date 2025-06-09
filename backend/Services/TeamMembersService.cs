@@ -4,6 +4,7 @@ using backend.DTOs;
 using backend.Repositories;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace backend.Services;
 
@@ -33,13 +34,14 @@ public class TeamMembersService : ITeamMembersService
         return await _teamMemberRepository.GetByIdAsync(teamId);
     }
 
-    public async Task<TeamMembers?> AddTeamMemberAsync(Guid teamId, string username)
+    public async Task<TeamMembers?> AddTeamMemberAsync(Guid teamId, string username, Guid requesterId)
     {
         var team = await _teamsRepository.GetByIdAsync(teamId);
-        if (team == null) throw new ArgumentException("Team not found");
+        if (team == null) throw new KeyNotFoundException("Team not found");
+        if (team.CreatedBy != requesterId) throw new UnauthorizedAccessException("You are not a teamlead for this team");
 
         var user = await _usersRepository.GetByUserNameAsync(username);
-        if (user == null) throw new ArgumentException("User not found");
+        if (user == null) throw new KeyNotFoundException("No user with that username exists");
 
         var membershipStatus = await _membershipStatusRepository.GetByNameAsync("Active");
         var existingMember = await _teamMemberRepository.GetUserByTeamIdAsync(team.Id, user.Id);
@@ -108,7 +110,7 @@ public class TeamMembersService : ITeamMembersService
     public async Task<List<TeamMemberDto>> GetUsersByTeamIdAsync(Guid teamId)
     {
         var team = await _teamsRepository.GetByIdAsync(teamId);
-        if (team == null) throw new ArgumentException("Team not found");
+        if (team == null) throw new KeyNotFoundException("Team not found");
 
         var teamMembers = await _teamMemberRepository.GetUsersByTeamIdAsync(teamId);
         return teamMembers.Select(tm => new TeamMemberDto

@@ -1,5 +1,6 @@
 using backend.DTOs;
 using backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers;
@@ -15,6 +16,7 @@ public class UsersController : ControllerBase
         _userService = userService;
     }
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> GetAll()
     {
         var users = await _userService.GetAllAsync();
@@ -22,6 +24,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<IActionResult> GetById(Guid id)
     {
         var user = await _userService.GetByIdAsync(id);
@@ -29,18 +32,19 @@ public class UsersController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserRoleDto updateUserDto)
     {
         if (id == Guid.Empty)
-        {
-            return BadRequest("User ID cannot be empty.");
-        }
+            return BadRequest(new { message = "User ID cannot be empty." });
+
+        if (string.IsNullOrEmpty(updateUserDto.RoleName))
+            return BadRequest(new { message = "Role is required" });
 
         var user = await _userService.updateUserRoleAsync(id, updateUserDto.RoleName);
         if (user == null)
-        {
-            return NotFound();
-        }
+            return NotFound(new { message = "User not found" });
+
         return Ok(user);
     }
 }

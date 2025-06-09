@@ -32,14 +32,13 @@ public class TeamRepository : ITeamsRepository
     }
     public async Task<IEnumerable<Teams>> GetAllByUserIdAsync(Guid userId)
     {
-        var teamIds = await _context.TeamMembers
-            .Where(tm => tm.UserId == userId)
-            .Select(tm => tm.TeamId)
-            .ToListAsync();
+        var teams = await (from t in _context.Teams
+                        join tm in _context.TeamMembers on t.Id equals tm.TeamId
+                        where tm.UserId == userId && tm.MembershipStatusId == 1
+                        select t)
+                        .ToListAsync();
 
-        return await _context.Teams
-            .Where(t => teamIds.Contains(t.Id))
-            .ToListAsync();
+        return teams;
     }
     public async Task<Teams?> GetByTeamNameAsync(string teamName)
     {
