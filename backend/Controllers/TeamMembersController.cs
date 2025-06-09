@@ -15,30 +15,6 @@ public class TeamMembersController : ControllerBase
         _teamMemberService = teamMemberService;
     }
 
-    [HttpGet("{teamId}")]
-    public async Task<ActionResult<TeamMemberDto>> GetTeamMemberByUserId(Guid teamId)
-    {
-        var member = await _teamMemberService.GetTeamMembersByIdAsync(teamId);
-        if (member == null)
-            return NotFound();
-        return Ok(member);
-    }
-
-    [HttpGet("{teamId}/users/{userId}")]
-    public async Task<ActionResult<TeamMemberDto>> GetTeamMemberByUserId(Guid teamId, Guid userId)
-    {
-        if (teamId == Guid.Empty || userId == Guid.Empty)
-        {
-            throw new ArgumentException("Team ID and User ID must be provided.");
-        }
-
-        var member = await _teamMemberService.GetUserByTeamIdAsync(teamId, userId);
-        if (member == null)
-            return NotFound();
-
-        return Ok(member);
-    }
-
     [HttpPost]
     public async Task<ActionResult<TeamMemberDto>> AddTeamMember([FromBody] AddTeamMemberRequest request)
     {
@@ -63,18 +39,6 @@ public class TeamMembersController : ControllerBase
         }
 
         return NoContent();
-    }
-
-    [HttpPut("{teamMemberId}/users/{userId}/status/{statusId:int}")]
-    public async Task<IActionResult> UpdateMembershipStatus(Guid teamMemberId, Guid userId, int statusId)
-    {
-        if (teamMemberId == Guid.Empty || userId == Guid.Empty)
-        {
-            throw new ArgumentException("Team ID and User ID must be provided.");
-        }
-
-        var updated = await _teamMemberService.UpdateMembershipStatusAsync(teamMemberId, userId, statusId);
-        return updated != null ? Ok(updated) : NotFound();
     }
 
     [HttpGet("{teamId}/users")]

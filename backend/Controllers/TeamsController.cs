@@ -10,11 +10,14 @@ namespace backend.Controllers;
 public class TeamsController : ControllerBase
 {
     private readonly ITeamsService _teamService;
+    private readonly ITodosService _todoService;
+
     private readonly IUserContextService _userContextService;
 
-    public TeamsController(ITeamsService teamService, IUserContextService userContextService)
+    public TeamsController(ITeamsService teamService, IUserContextService userContextService, ITodosService todosService)
     {
         _teamService = teamService;
+        _todoService = todosService;
         _userContextService = userContextService;
     }
 
@@ -33,13 +36,16 @@ public class TeamsController : ControllerBase
         }
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<TeamsDto>> GetTeamById(Guid id)
+    [HttpGet("{teamId:guid}")]
+    public async Task<ActionResult<TeamDetailsDto>> GetByTeamId(Guid teamId)
     {
-        var team = await _teamService.GetTeamByIdAsync(id);
-        if (team == null)
+        var userId = _userContextService.GetUserId();
+
+        var teamDetails = await _todoService.GetByTeamIdAsync(teamId, userId);
+        if (teamDetails == null)
             return NotFound();
-        return Ok(team);
+
+        return Ok(teamDetails);
     }
 
     [HttpPost]
@@ -52,29 +58,11 @@ public class TeamsController : ControllerBase
         {
             var createdBy = _userContextService.GetUserId();
             var newTeam = await _teamService.CreateTeamAsync(createTeamDto.Name, createdBy);
-            return CreatedAtAction(nameof(GetTeamById), new { id = newTeam.Id }, newTeam);
+            return CreatedAtAction(nameof(CreateTeam), new { id = newTeam.Id }, newTeam);
         }
         catch (InvalidOperationException ex)
         {
             return Conflict(ex.Message);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-    }
-    [HttpPut("name/{name}")]
-    public async Task<ActionResult<TeamsDto>> UpdateTeam(string name)
-    {
-        
-        if (string.IsNullOrWhiteSpace(name))
-            return BadRequest("Team name cannot be empty.");
-
-        try
-        {
-            var id = _userContextService.GetUserId();
-            var updatedTeam = await _teamService.UpdateTeamAsync(id, name);
-            return Ok(updatedTeam);
         }
         catch (KeyNotFoundException ex)
         {
