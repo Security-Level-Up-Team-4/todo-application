@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 import { TodoStatus, type Todo } from "../models/todo";
 import CreateTodoDialog from "../components/dialogs/CreateTodoDialog";
 import RemoveUsersDialog from "../components/dialogs/RemoveUsersDialog";
-import { mockUsers } from "../models/user";
-import { addUser, removeUsers } from "../api/teams";
-import { createTodo, getTodos } from "../api/todos";
+import {  type User } from "../models/user";
+import { addUser, getTeam, removeUsers } from "../api/teams";
+import { createTodo } from "../api/todos";
 import Loader from "../components/Loader";
 import ErrorDialog from "../components/dialogs/ErrorDialog";
 import ErrorPage from "../components/ErrorPage";
@@ -24,17 +24,22 @@ function Todos() {
 
   const [statusFilter, setStatusFilter] = useState("all");
 
+  const [teamName, setTeamName] = useState<string>("");
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [errorPageMessage, setErrorPageMessage] = useState("");
   const [errorDialogMessage, setErrorDialogMessage] = useState("");
 
   useEffect(() => {
     setLoading(true);
-    const fetchTeams = async () => {
+    const fetchTeam = async () => {
       try {
-        const data = await getTodos(team ?? "0");
-        setTodos(data);
+        const data = await getTeam(team ?? "0");
+        setTodos(data?.todos ?? []);
+        setUsers(data?.users ?? []);
+        setTeamName(data.name)
       } catch (error) {
         setErrorPageMessage(
           error instanceof Error ? error.message : "An unknown error occurred"
@@ -44,7 +49,21 @@ function Todos() {
       }
     };
 
-    fetchTeams();
+    // const fetchTeamUsers = async () => {
+    //   try {
+    //     const data = await getTeamUsers(team ?? "0");
+    //     setUsers(data);
+    //   } catch (error) {
+    //     setErrorPageMessage(
+    //       error instanceof Error ? error.message : "An unknown error occurred"
+    //     );
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
+
+    // fetchTeamUsers();
+    fetchTeam();
   }, [team]);
 
   const handleAddUser = async (username: string) => {
@@ -99,7 +118,7 @@ function Todos() {
       ) : (
         <main className="flex flex-col gap-8 p-4 w-full">
           <h1 className="w-full pt-4 text-center font-bold text-2xl">
-            Vodacom's To-Do list
+            {teamName}
           </h1>
           <section className="flex flex-wrap gap-2">
             <select
@@ -161,7 +180,7 @@ function Todos() {
       <RemoveUsersDialog
         isOpen={isRemoveUsersDialogOpen}
         onClose={() => setIsRemoveUsersDialogOpen(false)}
-        users={mockUsers}
+        users={users}
         onRemoveUsers={handleRemoveUsers}
       />
       <ErrorDialog

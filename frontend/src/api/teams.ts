@@ -15,6 +15,19 @@ async function getTeams(): Promise<Team[]> {
   return await response.json();
 }
 
+// Both todo user and team lead can do
+async function getTeam(teamId: string): Promise<Team> {
+  const response = await apiAuthedFetch({path: `/api/todos/teams/${teamId}`, method: "GET"});
+  if (!response.ok) {
+    const errorText = await response
+      .json()
+      .then((data) => data.message)
+      .catch(() => response.status.toString());
+    throw new Error(`Error: ${errorText}`);
+  }
+  return await response.json();
+}
+
 // Only a team lead can do
 async function addTeam(teamName: string): Promise<Team> {
   const response = await apiAuthedFetch({path: "/api/teams", method: "POST", body: JSON.stringify({ name: teamName })});
@@ -67,4 +80,4 @@ async function removeUsers(users: number[], team: string) {
   return await response.json();
 }
 
-export { getTeams, addTeam, addUser, removeUsers, getTeamUsers };
+export { getTeams, getTeam, addTeam, addUser, removeUsers, getTeamUsers };

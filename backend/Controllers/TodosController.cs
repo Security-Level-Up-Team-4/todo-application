@@ -17,13 +17,6 @@ public class TodosController : ControllerBase
         _userContextService = userContextService;
     }
 
-    [HttpGet]
-    public async Task<ActionResult> GetAll()
-    {
-        var todos = await _service.GetAllAsync();
-        return Ok(todos);
-    }
-
     [HttpGet("{id:guid}")]
     public async Task<ActionResult> GetById(Guid id)
     {
@@ -80,12 +73,12 @@ public class TodosController : ControllerBase
         return Ok(updated);
     }
 
-    [HttpPut("{id:guid}/team/{teamId:guid}")]
-    public async Task<ActionResult> UpdateTeam(Guid id, Guid teamId)
-    {
-        var updated = await _service.UpdateTeamAsync(id, teamId);
-        return Ok(updated);
-    }
+    // [HttpPut("{id:guid}/team/{teamId:guid}")]
+    // public async Task<ActionResult> UpdateTeam(Guid id, Guid teamId)
+    // {
+    //     var updated = await _service.UpdateTeamAsync(id, teamId);
+    //     return Ok(updated);
+    // }
 
     /*[HttpPut("{id:guid}/assign/{userId:guid}")]
     public async Task<ActionResult> UpdateAssignedTo(Guid id, Guid userId)
@@ -110,12 +103,12 @@ public class TodosController : ControllerBase
         return Ok(updated);
     }
 
-    [HttpPut("{id:guid}/updatedAt")]
-    public async Task<ActionResult> UpdateUpdatedAt(Guid id)
-    {
-        var updated = await _service.UpdateUpdatedAtAsync(id);
-        return Ok(updated);
-    }
+    // [HttpPut("{id:guid}/updatedAt")]
+    // public async Task<ActionResult> UpdateUpdatedAt(Guid id)
+    // {
+    //     var updated = await _service.UpdateUpdatedAtAsync(id);
+    //     return Ok(updated);
+    // }
 
     [HttpPut("closedAt/{todoId:guid}")]
     public async Task<ActionResult> UpdateClosedAt(Guid todoId)
