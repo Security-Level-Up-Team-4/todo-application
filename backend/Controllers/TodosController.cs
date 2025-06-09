@@ -112,7 +112,7 @@ public class TodosController : ControllerBase
     //     return Ok(updated);
     // }
 
-    [HttpPut("closedAt/{todoId:guid}")]
+    [HttpPut("close/{todoId:guid}")]
     public async Task<ActionResult> UpdateClosedAt(Guid todoId)
     {
         var updated = await _service.UpdateClosedAtAsync(todoId);

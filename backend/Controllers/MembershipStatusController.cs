@@ -15,12 +15,12 @@ public class MembershipStatusController : ControllerBase
         _membershipStatusService = membershipStatusService;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<MembershipStatusDto>>> GetAllStatuses()
-    {
-        var statuses = await _membershipStatusService.GetAllStatusesAsync();
-        return Ok(statuses);
-    }
+    // [HttpGet]
+    // public async Task<ActionResult<IEnumerable<MembershipStatusDto>>> GetAllStatuses()
+    // {
+    //     var statuses = await _membershipStatusService.GetAllStatusesAsync();
+    //     return Ok(statuses);
+    // }
 
     // [HttpGet("{id}")]
     // public async Task<ActionResult<MembershipStatusDto>> GetStatusById(int id)

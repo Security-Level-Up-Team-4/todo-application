@@ -35,14 +35,28 @@ public class TodosService : ITodosService
         return todos;
     }
 
-    public async Task<Todos?> GetByIdAsync(Guid todoId,Guid userId)
+    public async Task<TodosDTO?> GetByIdAsync(Guid todoId,Guid userId)
     {
         var todo = await _repo.GetByIdAsync(todoId);
         if (todo == null) throw new KeyNotFoundException($"Todo with ID {todoId} not found.");
 
         await isATeamMember(todo.TeamId,userId);
 
-        return todo;
+         return new TodosDTO
+         {
+             id = todo.id,
+             title = todo.Title,
+             description = todo.Description,
+             priority = todo.PriorityId,
+             priorityName = (await _prioritiesRepository.GetByIdAsync(todo.PriorityId)).Name,
+             status = (await _taskStatusesRepository.GetByIdAsync(todo.StatusId)).name,
+             createdBy = (await _usersRepository.GetByIdAsync(todo.CreatedBy)).Username,
+             teamId = todo.TeamId,
+             assignedTo = todo.assigned_to.HasValue ? (await _usersRepository.GetByIdAsync(todo.assigned_to.Value))?.Username ?? null : null,
+             createdAt = todo.CreatedAt,
+             updatedAt = todo.UpdatedAt,
+             closedAt = todo.ClosedAt
+         };
     }
     public async Task isATeamMember(Guid teamId, Guid userId)
     {
@@ -186,27 +200,48 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
         return todo;
     }
 
-    public async Task<Todos?> UpdateAssignedToAsync(Guid id, Guid assignedTo)
+    public async Task<TodosDTO?> UpdateAssignedToAsync(Guid id, Guid assignedTo)
     {
         var todo = await CheckIfTodoExistsAsync(id);
-        var taskStatus = await _taskStatusesRepository.GetByNameAsync("Active");
+        if (todo == null)
+            throw new Exception($"Todo with ID {id} not found.");
+        var taskStatus = await _taskStatusesRepository.GetByNameAsync("Open");
         
-        if (todo.StatusId == taskStatus.id)
+        if (todo.StatusId != taskStatus.id)
             throw new InvalidOperationException("Cannot assign a todo that is not active.");
 
-        var user = _usersRepository.GetByIdAsync(assignedTo);
+        var user = await _usersRepository.GetByIdAsync(assignedTo);
         if (user == null)
             throw new KeyNotFoundException($"User with ID {assignedTo} not found.");
             
         await isATeamMember(todo.TeamId, assignedTo);
 
         todo.assigned_to = assignedTo;
+        todo.StatusId = (await _taskStatusesRepository.GetByNameAsync("In Progress")).id;
+        todo.CreatedAt = DateTime.SpecifyKind(todo.CreatedAt, DateTimeKind.Utc);
+        todo.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+        todo.ClosedAt = todo.ClosedAt.HasValue ? DateTime.SpecifyKind(todo.ClosedAt.Value, DateTimeKind.Utc) : null;
+
         await _repo.UpdateAsync(todo);
 
-        return todo;
+        return new TodosDTO
+         {
+             id = todo.id,
+             title = todo.Title,
+             description = todo.Description,
+             priority = todo.PriorityId,
+             priorityName = (await _prioritiesRepository.GetByIdAsync(todo.PriorityId)).Name,
+             status = (await _taskStatusesRepository.GetByIdAsync(todo.StatusId)).name,
+             createdBy = (await _usersRepository.GetByIdAsync(todo.CreatedBy)).Username,
+             teamId = todo.TeamId,
+             assignedTo = todo.assigned_to.HasValue ? (await _usersRepository.GetByIdAsync(todo.assigned_to.Value))?.Username ?? null : null,
+             createdAt = todo.CreatedAt,
+             updatedAt = todo.UpdatedAt,
+             closedAt = todo.ClosedAt
+         };
     }
     
-    public async Task<Todos?> UnassignAsync(Guid todoId, Guid userId)
+    public async Task<TodosDTO?> UnassignAsync(Guid todoId, Guid userId)
     {
         var todo = await _repo.GetByIdAsync(todoId);
         if (todo == null)
@@ -218,9 +253,27 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
         await isATeamMember(todo.TeamId, userId);
 
         todo.assigned_to = null;
+        todo.StatusId = (await _taskStatusesRepository.GetByNameAsync("Open")).id;
+        todo.CreatedAt = DateTime.SpecifyKind(todo.CreatedAt, DateTimeKind.Utc);
+        todo.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+        todo.ClosedAt = todo.ClosedAt.HasValue ? DateTime.SpecifyKind(todo.ClosedAt.Value, DateTimeKind.Utc) : null;
         await _repo.UpdateAsync(todo);
 
-        return todo;
+        return new TodosDTO
+         {
+             id = todo.id,
+             title = todo.Title,
+             description = todo.Description,
+             priority = todo.PriorityId,
+             priorityName = (await _prioritiesRepository.GetByIdAsync(todo.PriorityId)).Name,
+             status = (await _taskStatusesRepository.GetByIdAsync(todo.StatusId)).name,
+             createdBy = (await _usersRepository.GetByIdAsync(todo.CreatedBy)).Username,
+             teamId = todo.TeamId,
+             assignedTo = todo.assigned_to.HasValue ? (await _usersRepository.GetByIdAsync(todo.assigned_to.Value))?.Username ?? null : null,
+             createdAt = todo.CreatedAt,
+             updatedAt = todo.UpdatedAt,
+             closedAt = todo.ClosedAt
+         };
     }
 
     public async Task<Todos?> UpdateUpdatedAtAsync(Guid id)
@@ -233,17 +286,32 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
         return todo;
     }
 
-    public async Task<Todos?> UpdateClosedAtAsync(Guid id)
+    public async Task<TodosDTO?> UpdateClosedAtAsync(Guid id)
     {
         var todo = await CheckIfTodoExistsAsync(id);
         var status = await _taskStatusesRepository.GetByNameAsync("Closed");
 
         todo.StatusId = status.id;
-        todo.ClosedAt = DateTime.UtcNow;
-        todo.UpdatedAt = DateTime.UtcNow;
+        todo.CreatedAt = DateTime.SpecifyKind(todo.CreatedAt, DateTimeKind.Utc);
+        todo.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+        todo.ClosedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
 
         await _repo.UpdateAsync(todo);
 
-        return todo;
+        return new TodosDTO
+         {
+             id = todo.id,
+             title = todo.Title,
+             description = todo.Description,
+             priority = todo.PriorityId,
+             priorityName = (await _prioritiesRepository.GetByIdAsync(todo.PriorityId)).Name,
+             status = (await _taskStatusesRepository.GetByIdAsync(todo.StatusId)).name,
+             createdBy = (await _usersRepository.GetByIdAsync(todo.CreatedBy)).Username,
+             teamId = todo.TeamId,
+             assignedTo = todo.assigned_to.HasValue ? (await _usersRepository.GetByIdAsync(todo.assigned_to.Value))?.Username ?? null : null,
+             createdAt = todo.CreatedAt,
+             updatedAt = todo.UpdatedAt,
+             closedAt = todo.ClosedAt
+         };
     }
 }
