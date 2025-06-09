@@ -2,7 +2,7 @@ namespace backend.DTOs;
 
 public class TeamMemberDto
 {
-    public Guid UserId { get; set; }
+    public Guid Id { get; set; }
     public string Username { get; set; } = string.Empty;
 }
 

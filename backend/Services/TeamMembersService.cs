@@ -93,17 +93,14 @@ public class TeamMembersService : ITeamMembersService
 
     public async Task<TeamMembers?> UpdateMembershipStatusAsync(Guid teamId,Guid userId, int statusId)
     {
-        var teamMember = await _teamMemberRepository.GetByIdAsync(teamId);
+        var teamMember = await _teamMemberRepository.GetUserByTeamIdAsync(teamId, userId);
         if (teamMember == null) throw new KeyNotFoundException($"Team member with ID {teamId} not found.");
-
-        var user = await _usersRepository.GetByIdAsync(userId);
-        if (user == null) throw new KeyNotFoundException($"User with ID {userId} not found.");
         
-        var membershipStatus = await _membershipStatusRepository.GetByIdAsync(statusId);
-        if (membershipStatus == null) throw new KeyNotFoundException($"Membership status with ID {statusId} not found.");
-
-        teamMember.MembershipStatusId = membershipStatus.Id;
-
+        teamMember.MembershipStatusId = statusId;
+        if (teamMember.CreatedAt.Kind == DateTimeKind.Unspecified)
+        {
+            teamMember.CreatedAt = DateTime.SpecifyKind(teamMember.CreatedAt, DateTimeKind.Utc);
+        }
         await _teamMemberRepository.UpdateAsync(teamMember);
         return teamMember;
     }
@@ -116,7 +113,7 @@ public class TeamMembersService : ITeamMembersService
         var teamMembers = await _teamMemberRepository.GetUsersByTeamIdAsync(teamId);
         return teamMembers.Select(tm => new TeamMemberDto
         {
-            UserId = tm.UserId,
+            Id = tm.UserId,
             Username = _usersRepository.GetByIdAsync(tm.UserId).Result?.Username
         }).ToList();
         
