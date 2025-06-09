@@ -10,12 +10,12 @@ namespace backend.Data
 
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Role> Roles { get; set; } = null!;
-    public DbSet<MembershipStatus> MembershipStatuses { get; set; }
-    public DbSet<Teams> Teams { get; set; }
-    public DbSet<TeamMembers> TeamMembers { get; set; }
-    public DbSet<Priorities> Priorities { get; set; }
-    public DbSet<TaskStatuses> TaskStatuses { get; set; }
-    public DbSet<Todos> Todos { get; set; }
+        public DbSet<MembershipStatus> MembershipStatuses { get; set; }
+        public DbSet<Teams> Teams { get; set; }
+        public DbSet<TeamMembers> TeamMembers { get; set; }
+        public DbSet<Priorities> Priorities { get; set; }
+        public DbSet<TaskStatuses> TaskStatuses { get; set; }
+        public DbSet<Todos> Todos { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -48,7 +48,22 @@ namespace backend.Data
 
             modelBuilder.Entity<MembershipStatus>().ToTable("membership_status");
             modelBuilder.Entity<Teams>().ToTable("teams");
-            modelBuilder.Entity<TeamMembers>().ToTable("team_members");
+            modelBuilder.Entity<TeamMembers>(entity =>
+            {
+                entity.ToTable("team_members");
+                entity.HasKey(tm => new { tm.TeamId, tm.UserId });
+                entity.Property(tm => tm.TeamId).HasColumnName("team_id");
+                entity.Property(tm => tm.UserId).HasColumnName("user_id");
+                entity.Property(tm => tm.CreatedAt).HasColumnName("created_at");
+                entity.Property(tm => tm.MembershipStatusId).HasColumnName("membership_status_id");
+                entity.HasOne<Teams>()
+                    .WithMany()
+                    .HasForeignKey(tm => tm.TeamId);
+
+                entity.HasOne<User>()
+                    .WithMany()
+                    .HasForeignKey(tm => tm.UserId);
+            });
             modelBuilder.Entity<Priorities>().ToTable("priorities");
             modelBuilder.Entity<TaskStatuses>().ToTable("todo_status");
             modelBuilder.Entity<Todos>().ToTable("todos");

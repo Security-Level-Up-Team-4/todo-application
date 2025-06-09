@@ -77,7 +77,6 @@ async function removeUsers(users: number[], team: string) {
       .catch(() => response.status.toString());
     throw new Error(`Error: ${errorText}`);
   }
-  return await response.json();
 }
 
 export { getTeams, getTeam, addTeam, addUser, removeUsers, getTeamUsers };
