@@ -13,18 +13,6 @@ public class MembershipStatusRepository : IMembershipStatusRepository
     public async Task<MembershipStatus?> GetByIdAsync(int id) =>
         await _context.MembershipStatuses.FindAsync(id);
 
-    public async Task<MembershipStatus> AddAsync(MembershipStatus status)
-    {
-        _context.MembershipStatuses.Add(status);
-        await _context.SaveChangesAsync();
-        return status;
-    }
-
-    public async Task UpdateAsync(MembershipStatus status)
-    {
-        _context.MembershipStatuses.Update(status);
-        await _context.SaveChangesAsync();
-    }
     public async Task<MembershipStatus?> GetByNameAsync(string name)
     {
         return await _context.MembershipStatuses
