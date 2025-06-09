@@ -15,13 +15,6 @@ public class TeamMembersController : ControllerBase
         _teamMemberService = teamMemberService;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<TeamMemberDto>>> GetAllTeamMembers()
-    {
-        var members = await _teamMemberService.GetAllTeamMembersAsync();
-        return Ok(members);
-    }
-
     [HttpGet("{teamId}")]
     public async Task<ActionResult<TeamMemberDto>> GetTeamMemberByUserId(Guid teamId)
     {

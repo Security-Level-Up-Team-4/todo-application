@@ -22,28 +22,28 @@ public class MembershipStatusController : ControllerBase
         return Ok(statuses);
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<MembershipStatusDto>> GetStatusById(int id)
-    {
-        var status = await _membershipStatusService.GetStatusByIdAsync(id);
-        if (status == null)
-            return NotFound();
-        return Ok(status);
-    }
+    // [HttpGet("{id}")]
+    // public async Task<ActionResult<MembershipStatusDto>> GetStatusById(int id)
+    // {
+    //     var status = await _membershipStatusService.GetStatusByIdAsync(id);
+    //     if (status == null)
+    //         return NotFound();
+    //     return Ok(status);
+    // }
 
-    [HttpPost]
-    public async Task<ActionResult<MembershipStatusDto>> CreateStatus([FromBody] string statusName)
-    {
-        var newStatus = await _membershipStatusService.CreateStatusAsync(statusName);
-        return CreatedAtAction(nameof(GetStatusById), new { id = newStatus.Id }, newStatus);
-    }
+    // [HttpPost]
+    // public async Task<ActionResult<MembershipStatusDto>> CreateStatus([FromBody] string statusName)
+    // {
+    //     var newStatus = await _membershipStatusService.CreateStatusAsync(statusName);
+    //     return CreatedAtAction(nameof(GetStatusById), new { id = newStatus.Id }, newStatus);
+    // }
 
-    [HttpPut("{id}")]
-    public async Task<ActionResult<MembershipStatusDto>> UpdateStatus(int id, [FromBody] string updatedStatus)
-    {
-        var existingStatus = await _membershipStatusService.UpdateStatusAsync(id, updatedStatus);
-        if (existingStatus == null)
-            return NotFound();
-        return Ok(existingStatus);
-    }
+    // [HttpPut("{id}")]
+    // public async Task<ActionResult<MembershipStatusDto>> UpdateStatus(int id, [FromBody] string updatedStatus)
+    // {
+    //     var existingStatus = await _membershipStatusService.UpdateStatusAsync(id, updatedStatus);
+    //     if (existingStatus == null)
+    //         return NotFound();
+    //     return Ok(existingStatus);
+    // }
 }

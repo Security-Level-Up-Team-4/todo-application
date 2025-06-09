@@ -15,18 +15,18 @@ public class RolesController : ControllerBase
         _roleService = roleService;
     }
 
-    [HttpGet]
-    public async Task<ActionResult> GetAllRoles()
-    {
-        var roles = await _roleService.GetAllRolesAsync();
-        return Ok(roles);
-    }
+    // [HttpGet]
+    // public async Task<ActionResult> GetAllRoles()
+    // {
+    //     var roles = await _roleService.GetAllRolesAsync();
+    //     return Ok(roles);
+    // }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult> GetRoleById(int id)
-    {
-        var role = await _roleService.GetRoleByIdAsync(id);
-        if (role == null) return NotFound();
-        return Ok(role);
-    }
+    // [HttpGet("{id}")]
+    // public async Task<ActionResult> GetRoleById(int id)
+    // {
+    //     var role = await _roleService.GetRoleByIdAsync(id);
+    //     if (role == null) return NotFound();
+    //     return Ok(role);
+    // }
 }

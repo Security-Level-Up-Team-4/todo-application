@@ -15,37 +15,37 @@ public class TaskStatusesController : ControllerBase
         _service = service;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<TaskStatusesDTO>>> GetAll()
-    {
-        var statuses = await _service.GetAllAsync();
-        return Ok(statuses);
-    }
+    // [HttpGet]
+    // public async Task<ActionResult<IEnumerable<TaskStatusesDTO>>> GetAll()
+    // {
+    //     var statuses = await _service.GetAllAsync();
+    //     return Ok(statuses);
+    // }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<TaskStatusesDTO>> GetById(int id)
-    {
-        var status = await _service.GetByIdAsync(id);
-        if (status == null)
-            return NotFound();
+    // [HttpGet("{id}")]
+    // public async Task<ActionResult<TaskStatusesDTO>> GetById(int id)
+    // {
+    //     var status = await _service.GetByIdAsync(id);
+    //     if (status == null)
+    //         return NotFound();
 
-        return Ok(status);
-    }
+    //     return Ok(status);
+    // }
 
-    [HttpPost]
-    public async Task<ActionResult<TaskStatusesDTO>> Create(string dto)
-    {
-        if (string.IsNullOrWhiteSpace(dto))
-            return BadRequest("Task status cannot be empty.");
+    // [HttpPost]
+    // public async Task<ActionResult<TaskStatusesDTO>> Create(string dto)
+    // {
+    //     if (string.IsNullOrWhiteSpace(dto))
+    //         return BadRequest("Task status cannot be empty.");
 
-        var created = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
-    }
+    //     var created = await _service.CreateAsync(dto);
+    //     return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+    // }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, string taskName)
-    {
-        await _service.UpdateAsync(id, taskName);
-        return NoContent();
-    }
+    // [HttpPut("{id}")]
+    // public async Task<IActionResult> Update(int id, string taskName)
+    // {
+    //     await _service.UpdateAsync(id, taskName);
+    //     return NoContent();
+    // }
 }

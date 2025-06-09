@@ -1,9 +1,23 @@
 import { type Team } from "../models/team";
+import type { User } from "../models/user";
 import { apiAuthedFetch } from "./apiUtils";
 
 // Both team lead and todo user can do
 async function getTeams(): Promise<Team[]> {
   const response = await apiAuthedFetch({path: "/api/teams", method: "GET"});
+  if (!response.ok) {
+    const errorText = await response
+      .json()
+      .then((data) => data.message)
+      .catch(() => response.status.toString());
+    throw new Error(`Error: ${errorText}`);
+  }
+  return await response.json();
+}
+
+// Both todo user and team lead can do
+async function getTeam(teamId: string): Promise<Team> {
+  const response = await apiAuthedFetch({path: `/api/todos/teams/${teamId}`, method: "GET"});
   if (!response.ok) {
     const errorText = await response
       .json()
@@ -41,17 +55,29 @@ async function addUser(username: string, team: string) {
 }
 
 // Only a team lead can do
-async function removeUsers(users: number[], team: string) {
-  // const response = await apiAuthedFetch({path: "/api/teams/users", method: "PUT", body: JSON.stringify({ users, teamId: team })});
-  // if (!response.ok) {
-  //   const errorText = await response
-  //     .json()
-  //     .then((data) => data.message)
-  //     .catch(() => response.status.toString());
-  //   throw new Error(`Error: ${errorText}`);
-  // }
-  // return await response.json();
-  console.log(users, team);
+async function getTeamUsers(team: string): Promise<User[]> {
+  const response = await apiAuthedFetch({path: `/api/teammembers/${team}/users`, method: "GET"});
+  if (!response.ok) {
+    const errorText = await response
+      .json()
+      .then((data) => data.message)
+      .catch(() => response.status.toString());
+    throw new Error(`Error: ${errorText}`);
+  }
+  return await response.json();
 }
 
-export { getTeams, addTeam, addUser, removeUsers };
+// Only a team lead can do
+async function removeUsers(users: number[], team: string) {
+  const response = await apiAuthedFetch({path: "/api/teammembers/users", method: "PUT", body: JSON.stringify({ userIds: users, TeamId: team })});
+  if (!response.ok) {
+    const errorText = await response
+      .json()
+      .then((data) => data.message)
+      .catch(() => response.status.toString());
+    throw new Error(`Error: ${errorText}`);
+  }
+  return await response.json();
+}
+
+export { getTeams, getTeam, addTeam, addUser, removeUsers, getTeamUsers };

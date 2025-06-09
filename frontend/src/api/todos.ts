@@ -4,7 +4,7 @@ import {
   type Todo,
   type TodoTimeline,
 } from "../models/todo";
-// import { apiAuthedFetch } from "../utils/api";
+import { apiAuthedFetch } from "./apiUtils";
 
 // Both todo user and team lead can do (Have to be a member of the team that the todo belongs in)
 async function getTodo(todoId: string): Promise<Todo> {
@@ -110,23 +110,23 @@ async function createTodo(
   todoPriority: number,
   team: string
 ): Promise<Todo> {
-  // const response = await apiAuthedFetch({
-  //   path: `/api/teams/todo?teamId={team}`,
-  //   method: "POST",
-  //   body: JSON.stringify({
-  //     name: todoName,
-  //     description: todoDescription,
-  //     priority: todoPriority,
-  //   }),
-  // });
-  // if (!response.ok) {
-  //   const errorText = await response
-  //     .json()
-  //     .then((data) => data.message)
-  //     .catch(() => response.status.toString());
-  //   throw new Error(`Error: ${errorText}`);
-  // }
-  // return await response.json();
+  const response = await apiAuthedFetch({
+    path: `/api/todos/{team}`,
+    method: "POST",
+    body: JSON.stringify({
+      name: todoName,
+      description: todoDescription,
+      priority: todoPriority,
+    }),
+  });
+  if (!response.ok) {
+    const errorText = await response
+      .json()
+      .then((data) => data.message)
+      .catch(() => response.status.toString());
+    throw new Error(`Error: ${errorText}`);
+  }
+  return await response.json();
 
   console.log("Todo Name:", todoName);
   console.log("Description:", todoDescription);
