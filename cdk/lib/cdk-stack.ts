@@ -284,8 +284,8 @@ export class CdkStack extends cdk.Stack {
       ],
     });
 
-    const hostedZone = route53.HostedZone.fromLookup(this, 'HostedZone', {
-      domainName: 'secure-todo.xyz',
+    const hostedZone = new route53.PublicHostedZone(this, 'TodoHostedZone', {
+      zoneName: 'secure-todo.xyz',
     });
 
     new route53.ARecord(this, 'AliasRecordToCloudFront', {
