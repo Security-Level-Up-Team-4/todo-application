@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useReducer, useEffect, type ReactNode } from 'react';
 import { authApi } from '../api/auth';
 import type { 
   AuthState, 
@@ -7,17 +7,19 @@ import type {
   SignUpRequest,
   Verify2FARequest,
   Confirm2FASetupRequest 
-} from '../types/auth';
+} from '../models/auth';
+import { UserRoles } from '../models/user';
 
 type AuthAction =
   | { type: 'SET_LOADING'; payload: boolean }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | { type: 'SET_USER'; payload: { user: any; token: string } }
   | { type: 'LOGOUT' }
   | { type: 'CLEAR_ERROR' };
 
 const initialState: AuthState = {
   user: null,
-  token: localStorage.getItem('token'),
+  token: sessionStorage.getItem('token'),
   isLoading: false,
   isAuthenticated: false,
 };
@@ -55,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (token) {
       dispatch({ type: 'SET_USER', payload: { user: { id: '1', username: 'user', email: 'user@example.com', is2faEnabled: false }, token } });
     }
@@ -87,12 +89,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const verify2FA = async (request: Verify2FARequest) => {
+  const verify2FA = async (request: Verify2FARequest, navigate: (path: string) => void) => {
     dispatch({ type: 'SET_LOADING', payload: true });
     try {
       const response = await authApi.verify2FA(request);
-      localStorage.setItem('token', response.token);
-      const user = { username: response.username, role: response.userRoleName, is2faEnabled: true };
+      sessionStorage.setItem('token', response.token);
+      sessionStorage.setItem('user-role', response.userRoleName);
+      sessionStorage.setItem('username', response.userName);
+      if (navigate) {
+        if (response.userRoleName === UserRoles.ADMIN) {
+          navigate('/admin');
+        } else {
+          navigate('/teams');
+        }
+      }
+      const user = { username: response.userName, role: response.userRoleName, is2faEnabled: true };
       dispatch({ type: 'SET_USER', payload: { user, token: response.token } });
     } catch (error) {
       dispatch({ type: 'SET_LOADING', payload: false });
@@ -101,6 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const confirm2FASetup = async (request: Confirm2FASetupRequest) => {
+    // eslint-disable-next-line no-useless-catch
     try {
       await authApi.confirm2FASetup(request);
       if (state.user) {
@@ -113,7 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     dispatch({ type: 'LOGOUT' });
   };
 
@@ -129,6 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {

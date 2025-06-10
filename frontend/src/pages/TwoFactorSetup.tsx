@@ -119,7 +119,7 @@ export default function TwoFactorSetup({ totpSetupUri, tempSessionToken, onCompl
             </code>
             <button
               onClick={handleCopySecret}
-              className="p-1 text-gray-500 hover:text-gray-700 transition-colors"
+              className="p-1 text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
             >
               {copied ? (
                 <Check size={16} className="text-green-600" />
@@ -145,7 +145,7 @@ export default function TwoFactorSetup({ totpSetupUri, tempSessionToken, onCompl
           <Button
             type="submit"
             loading={isVerifying}
-            className="w-full"
+            className="w-full cursor-pointer"
             size="lg"
           >
             Verify & Complete Setup

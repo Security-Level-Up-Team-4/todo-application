@@ -1,5 +1,4 @@
-const API_BASE_URL = 'http://team4-todo-api-env.eba-mbxpp9md.us-east-1.elasticbeanstalk.com/api';
-
+import { apiBaseUrl } from "../config";
 class ApiError extends Error {
   constructor(public status: number, message: string) {
     super(message);
@@ -11,8 +10,8 @@ async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint}`;
-  const token = localStorage.getItem('token');
+  const url = `${apiBaseUrl}/api${endpoint}`;
+  const token = sessionStorage.getItem('token');
   
   const config: RequestInit = {
     headers: {
@@ -44,28 +43,28 @@ async function apiRequest<T>(
 }
 
 export const authApi = {
-  signup: async (userData: import('../types/auth').SignUpRequest) => {
-    return apiRequest<import('../types/auth').SignUpResponse>('/auth/signup', {
+  signup: async (userData: import('../models/auth').SignUpRequest) => {
+    return apiRequest<import('../models/auth').SignUpResponse>('/auth/signup', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
   },
 
-  login: async (credentials: import('../types/auth').LoginRequest) => {
-    return apiRequest<import('../types/auth').LoginResponse>('/auth/login', {
+  login: async (credentials: import('../models/auth').LoginRequest) => {
+    return apiRequest<import('../models/auth').LoginResponse>('/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
   },
 
-  verify2FA: async (request: import('../types/auth').Verify2FARequest) => {
-    return apiRequest<import('../types/auth').Verify2FAResponse>('/auth/verify-2fa', {
+  verify2FA: async (request: import('../models/auth').Verify2FARequest) => {
+    return apiRequest<import('../models/auth').Verify2FAResponse>('/auth/verify-2fa', {
       method: 'POST',
       body: JSON.stringify(request),
     });
   },
 
-  confirm2FASetup: async (request: import('../types/auth').Confirm2FASetupRequest) => {
+  confirm2FASetup: async (request: import('../models/auth').Confirm2FASetupRequest) => {
     return apiRequest<{ message: string }>('/auth/confirm-2fa', {
       method: 'POST',
       body: JSON.stringify(request),

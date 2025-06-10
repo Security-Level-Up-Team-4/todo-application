@@ -1,3 +1,1 @@
 export const apiBaseUrl = "http://team4-todo-api-env.eba-mbxpp9md.us-east-1.elasticbeanstalk.com"
-// export const apiBaseUrl = "http://localhost:5080"
-

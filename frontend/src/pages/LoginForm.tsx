@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock } from 'lucide-react';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import { useAuth } from '../contexts/AuthContext';
 import { ApiError } from '../api/auth';
-import type { LoginRequest } from '../types/auth';
+import type { LoginRequest } from '../models/auth';
 
 interface LoginFormProps {
   onSignupClick: () => void;
@@ -18,7 +19,6 @@ export default function LoginForm({ onSignupClick, onRequires2FA }: LoginFormPro
     password: '',
   });
   const [errors, setErrors] = useState<Partial<LoginRequest>>({});
-  const [showPassword, setShowPassword] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
   const validateForm = (): boolean => {
@@ -60,16 +60,16 @@ export default function LoginForm({ onSignupClick, onRequires2FA }: LoginFormPro
   const handleInputChange = (field: keyof LoginRequest) => (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setFormData(prev => ({ ...prev, [field]: e.target.value }));
+    setFormData((prev: any) => ({ ...prev, [field]: e.target.value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors((prev: any) => ({ ...prev, [field]: undefined }));
     }
   };
 
   return (
     <div className="w-full max-w-md space-y-6">
       <div className="text-center">
-        <h2 className="text-3xl font-bold text-gray-900">Welcome back</h2>
+        <h2 className="text-3xl font-bold text-gray-900">Todo App</h2>
         <p className="mt-2 text-gray-600">Sign in to your account</p>
       </div>
 
@@ -86,7 +86,7 @@ export default function LoginForm({ onSignupClick, onRequires2FA }: LoginFormPro
 
         <div className="relative">
           <Input
-            type={showPassword ? 'text' : 'password'}
+            type={'password'}
             label="Password"
             placeholder="Enter your password"
             value={formData.password}
@@ -94,13 +94,6 @@ export default function LoginForm({ onSignupClick, onRequires2FA }: LoginFormPro
             error={errors.password}
             icon={<Lock size={18} />}
           />
-          <button
-            type="button"
-            className="absolute right-3 top-8 text-gray-400 hover:text-gray-600"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
         </div>
 
         {submitError && (
@@ -112,7 +105,7 @@ export default function LoginForm({ onSignupClick, onRequires2FA }: LoginFormPro
         <Button
           type="submit"
           loading={isLoading}
-          className="w-full"
+          className="w-full cursor-pointer"
           size="lg"
         >
           Sign In
@@ -123,7 +116,7 @@ export default function LoginForm({ onSignupClick, onRequires2FA }: LoginFormPro
         <span className="text-gray-600">Don't have an account? </span>
         <button
           onClick={onSignupClick}
-          className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
+          className="text-blue-600 hover:text-blue-700 font-medium transition-colors cursor-pointer"
         >
           Sign up
         </button>

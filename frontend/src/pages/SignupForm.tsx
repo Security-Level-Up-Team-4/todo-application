@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, User } from 'lucide-react';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import { useAuth } from '../contexts/AuthContext';
 import { ApiError } from '../api/auth';
-import type { SignUpRequest } from '../types/auth';
+import type { SignUpRequest } from '../models/auth';
 
 interface SignupFormProps {
   onLoginClick: () => void;
@@ -20,7 +20,6 @@ export default function SignupForm({ onLoginClick, onSuccess }: SignupFormProps)
     confirmPassword: '',
   });
   const [errors, setErrors] = useState<Partial<SignUpRequest>>({});
-  const [showPassword, setShowPassword] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
   const validateForm = (): boolean => {
@@ -30,6 +29,8 @@ export default function SignupForm({ onLoginClick, onSuccess }: SignupFormProps)
       newErrors.username = 'Username is required';
     } else if (formData.username.length < 3) {
       newErrors.username = 'Username must be at least 3 characters';
+    } else if (formData.username.length > 100) {
+      newErrors.username = 'Username cannot be over 100 characters';
     }
 
     if (!formData.email.trim()) {
@@ -40,8 +41,8 @@ export default function SignupForm({ onLoginClick, onSuccess }: SignupFormProps)
 
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
     }
 
     if (!formData.confirmPassword) {
@@ -85,7 +86,6 @@ export default function SignupForm({ onLoginClick, onSuccess }: SignupFormProps)
     <div className="w-full max-w-md space-y-6">
       <div className="text-center" style={{ maxWidth: '600px' }}>
         <h2 className="text-3xl font-bold text-gray-900">Create account</h2>
-        <p className="mt-2 text-gray-600">Join us today</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -111,7 +111,7 @@ export default function SignupForm({ onLoginClick, onSuccess }: SignupFormProps)
 
         <div className="relative">
           <Input
-            type={showPassword ? 'text' : 'password'}
+            type={'password'}
             label="Password"
             placeholder="Create a password"
             value={formData.password}
@@ -119,17 +119,10 @@ export default function SignupForm({ onLoginClick, onSuccess }: SignupFormProps)
             error={errors.password}
             icon={<Lock size={18} />}
           />
-          <button
-            type="button"
-            className="absolute right-3 top-8 text-gray-400 hover:text-gray-600"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
         </div>
 
         <Input
-          type={showPassword ? 'text' : 'password'}
+          type={'password'}
           label="Confirm Password"
           placeholder="Confirm your password"
           value={formData.confirmPassword}
@@ -147,7 +140,7 @@ export default function SignupForm({ onLoginClick, onSuccess }: SignupFormProps)
         <Button
           type="submit"
           loading={isLoading}
-          className="w-full"
+          className="w-full cursor-pointer"
           size="lg"
         >
           Create Account
@@ -158,7 +151,7 @@ export default function SignupForm({ onLoginClick, onSuccess }: SignupFormProps)
         <span className="text-gray-600">Already have an account? </span>
         <button
           onClick={onLoginClick}
-          className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
+          className="text-blue-600 hover:text-blue-700 font-medium transition-colors cursor-pointer"
         >
           Sign in
         </button>

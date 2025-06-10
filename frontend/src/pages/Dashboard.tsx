@@ -1,4 +1,3 @@
-import React from 'react';
 import { User, LogOut } from 'lucide-react';
 import Button from '../components/Button';
 import { useAuth } from '../contexts/AuthContext';
@@ -11,7 +10,6 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          {/* Header */}
           <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-gray-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">

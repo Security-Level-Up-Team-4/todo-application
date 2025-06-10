@@ -4,6 +4,7 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 import { useAuth } from '../contexts/AuthContext';
 import { ApiError } from '../api/auth';
+import { useNavigate } from 'react-router-dom';
 
 interface TwoFactorVerificationProps {
   tempSessionToken: string;
@@ -14,6 +15,7 @@ export default function TwoFactorVerification({ tempSessionToken, onBack }: TwoF
   const { verify2FA, isLoading } = useAuth();
   const [totpCode, setTotpCode] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +35,8 @@ export default function TwoFactorVerification({ tempSessionToken, onBack }: TwoF
       await verify2FA({
         tempSessionToken,
         totpCode,
-      });
+      }, navigate
+    );
     } catch (error) {
       if (error instanceof ApiError) {
         setError(error.message);
@@ -70,7 +73,7 @@ export default function TwoFactorVerification({ tempSessionToken, onBack }: TwoF
         <Button
           type="submit"
           loading={isLoading}
-          className="w-full"
+          className="w-full cursor-pointer"
           size="lg"
         >
           Verify Code
@@ -80,7 +83,7 @@ export default function TwoFactorVerification({ tempSessionToken, onBack }: TwoF
           type="button"
           variant="outline"
           onClick={onBack}
-          className="w-full"
+          className="w-full cursor-pointer"
         >
           Back to Login
         </Button>

@@ -37,7 +37,7 @@ export interface Verify2FARequest {
 
 export interface Verify2FAResponse {
   token: string;
-  username: string;
+  userName: string;
   userRoleName: string
 }
 
@@ -56,7 +56,7 @@ export interface AuthState {
 export interface AuthContextType extends AuthState {
   login: (credentials: LoginRequest) => Promise<LoginResponse>;
   signup: (userData: SignUpRequest) => Promise<SignUpResponse>;
-  verify2FA: (request: Verify2FARequest) => Promise<void>;
+  verify2FA: (request: Verify2FARequest, navigate: (path: string) => void) => Promise<void>;
   confirm2FASetup: (request: Confirm2FASetupRequest) => Promise<void>;
   logout: () => void;
 }
