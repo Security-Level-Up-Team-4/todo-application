@@ -81,7 +81,7 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
         var statusMap = taskStatuses.ToDictionary(s => s.id, s => s.name);
 
         if (todoItems == null) throw new KeyNotFoundException($"No todos found for team with ID {teamId}.");
-       var  usersList = teamMembers.Select(member => new UserDto
+        var  usersList = teamMembers.Select(member => new UserDto
         {
             Id = member.Id,
             Username = member.Username,

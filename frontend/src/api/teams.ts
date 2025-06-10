@@ -1,5 +1,4 @@
 import { type Team } from "../models/team";
-import type { User } from "../models/user";
 import { apiAuthedFetch } from "./apiUtils";
 
 // Both team lead and todo user can do
@@ -55,19 +54,6 @@ async function addUser(username: string, team: string) {
 }
 
 // Only a team lead can do
-async function getTeamUsers(team: string): Promise<User[]> {
-  const response = await apiAuthedFetch({path: `/api/teammembers/${team}/users`, method: "GET"});
-  if (!response.ok) {
-    const errorText = await response
-      .json()
-      .then((data) => data.message)
-      .catch(() => response.status.toString());
-    throw new Error(`Error: ${errorText}`);
-  }
-  return await response.json();
-}
-
-// Only a team lead can do
 async function removeUsers(users: number[], team: string) {
   const response = await apiAuthedFetch({path: "/api/teammembers/users", method: "PUT", body: JSON.stringify({ userIds: users, TeamId: team })});
   if (!response.ok) {
@@ -79,4 +65,4 @@ async function removeUsers(users: number[], team: string) {
   }
 }
 
-export { getTeams, getTeam, addTeam, addUser, removeUsers, getTeamUsers };
+export { getTeams, getTeam, addTeam, addUser, removeUsers };

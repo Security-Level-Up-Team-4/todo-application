@@ -21,10 +21,9 @@ public class TeamsController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
+    [Authorize(Roles = "team_lead,todo_user")]
     public async Task<ActionResult<IEnumerable<TeamsDto>>> GetAllTeamsByUserId()
     {
-        //Only todo users and team leaders can access
         try
         {
             var userId = _userContextService.GetUserId();
@@ -42,10 +41,9 @@ public class TeamsController : ControllerBase
     }
 
     [HttpGet("{teamId:guid}")]
-    [Authorize]
+    [Authorize(Roles = "team_lead,todo_user")]
     public async Task<ActionResult<TeamDetailsDto>> GetByTeamId(Guid teamId)
     {
-        //Only todo users and team leaders can access
         try
         {
             var userId = _userContextService.GetUserId();
@@ -67,7 +65,7 @@ public class TeamsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize]
+    [Authorize(Roles = "team_lead")]
     public async Task<ActionResult<TeamsDto>> CreateTeam([FromBody] CreateTeamDto createTeamDto)
     {
         if (string.IsNullOrWhiteSpace(createTeamDto.Name))

@@ -39,7 +39,7 @@ function Todos() {
         const data = await getTeam(team ?? "0");
         setTodos(data?.todos ?? []);
         setUsers(data?.users ?? []);
-        setTeamName(data.teamName)
+        setTeamName(data.name)
       } catch (error) {
         setErrorPageMessage(
           error instanceof Error ? error.message : "An unknown error occurred"
@@ -48,21 +48,6 @@ function Todos() {
         setLoading(false);
       }
     };
-
-    // const fetchTeamUsers = async () => {
-    //   try {
-    //     const data = await getTeamUsers(team ?? "0");
-    //     setUsers(data);
-    //   } catch (error) {
-    //     setErrorPageMessage(
-    //       error instanceof Error ? error.message : "An unknown error occurred"
-    //     );
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
-
-    // fetchTeamUsers();
     fetchTeam();
   }, [team]);
 

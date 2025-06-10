@@ -32,7 +32,10 @@ public class UsersService : IUsersService
     public async Task<UsersDTO?> GetByIdAsync(Guid id)
     {
         var user = await _userRepository.GetByIdAsync(id);
+        if (user == null) throw new KeyNotFoundException("User not found");
+
         var role = await _roleRepository.GetByIdAsync(user.RoleId);
+        if (role == null) throw new KeyNotFoundException("Role not found");
 
         return user == null ? null : new UsersDTO
         {
@@ -48,15 +51,11 @@ public class UsersService : IUsersService
     {
         var user =await _userRepository.GetByIdAsync(userId);
         if (user == null)
-        {
             throw new KeyNotFoundException($"User with ID {userId} not found.");
-        }
 
-        var role =await _roleRepository.GetByNameAsync(roleName);
+        var role = await _roleRepository.GetByNameAsync(roleName);
         if (role == null)
-        {
             throw new KeyNotFoundException($"Role '{roleName}' not found.");
-        }
 
         user.RoleId = role.Id;
 

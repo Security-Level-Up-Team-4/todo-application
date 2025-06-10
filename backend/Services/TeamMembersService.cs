@@ -80,8 +80,11 @@ public class TeamMembersService : ITeamMembersService
         return member;
     }
 
-    public async Task<TeamMembers?> RemoveTeamMemberAsync(Guid teamId, Guid userId)
+    public async Task<TeamMembers?> RemoveTeamMemberAsync(Guid teamId, Guid userId, Guid requesterId)
     {
+        var team = await _teamsRepository.GetByIdAsync(teamId);
+        if (team.CreatedBy != requesterId) throw new UnauthorizedAccessException("You are not a teamlead for this team");
+
         var teamMember = await _teamMemberRepository.GetUserByTeamIdAsync(teamId, userId);
         if (teamMember == null)
         {

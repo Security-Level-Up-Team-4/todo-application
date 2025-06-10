@@ -19,7 +19,7 @@ public class TodosController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    [Authorize]
+    [Authorize(Roles = "team_lead,todo_user")]
     public async Task<ActionResult> GetById(Guid id)
     {
         try
@@ -41,7 +41,7 @@ public class TodosController : ControllerBase
     }
 
     [HttpPost("{teamId:guid}")]
-    [Authorize]
+    [Authorize(Roles = "team_lead,todo_user")]
     public async Task<ActionResult> Create([FromBody] TodosDTO dto, Guid teamId)
     {
         try
@@ -62,7 +62,7 @@ public class TodosController : ControllerBase
     }
 
     [HttpPut("assign/{todoId:guid}")]
-    [Authorize]
+    [Authorize(Roles = "team_lead,todo_user")]
     public async Task<ActionResult> UpdateAssignedTo(Guid todoId)
     {
         try
@@ -83,7 +83,7 @@ public class TodosController : ControllerBase
     }
 
     [HttpPut("unassign/{todoId:guid}")]
-    [Authorize]
+    [Authorize(Roles = "team_lead,todo_user")]
     public async Task<ActionResult> Unassign(Guid todoId)
     {
         try
@@ -103,7 +103,7 @@ public class TodosController : ControllerBase
     }
 
     [HttpPut("close/{todoId:guid}")]
-    [Authorize]
+    [Authorize(Roles = "team_lead,todo_user")]
     public async Task<ActionResult> UpdateClosedAt(Guid todoId)
     {
         try

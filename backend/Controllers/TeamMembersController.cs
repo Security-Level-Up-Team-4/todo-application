@@ -19,7 +19,7 @@ public class TeamMembersController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize]
+    [Authorize(Roles = "team_lead")]
     public async Task<ActionResult<TeamMemberDto>> AddTeamMember([FromBody] AddTeamMemberRequest request)
     {
         try
@@ -49,11 +49,13 @@ public class TeamMembersController : ControllerBase
     }
 
     [HttpPut("users")]
-    [Authorize]
+    [Authorize(Roles = "team_lead")]
     public async Task<IActionResult> RemoveTeamMembers([FromBody] RemoveTeamMembersDto dto)
     {
         try
         {
+            var callerUserId = _userContextService.GetUserId();
+
             if (dto.TeamId == Guid.Empty)
                 return BadRequest(new { message = "Team ID required" });
             if (dto.UserIds == null || !dto.UserIds.Any())
@@ -61,11 +63,11 @@ public class TeamMembersController : ControllerBase
 
             foreach (var userId in dto.UserIds)
             {
-                await _teamMemberService.RemoveTeamMemberAsync(dto.TeamId, userId);
+                await _teamMemberService.RemoveTeamMemberAsync(dto.TeamId, userId, callerUserId);
             }
 
             return NoContent();
-                }
+        }
         catch (KeyNotFoundException ex)
         {
             return NotFound(new { message = ex.Message });
@@ -78,18 +80,5 @@ public class TeamMembersController : ControllerBase
         {
             return Conflict(new { message = ex.Message });
         }
-    }
-
-    [HttpGet("{teamId}/users")]
-    [Authorize]
-    public async Task<ActionResult<IEnumerable<TeamMemberDto>>> GetUsersByTeamId(Guid teamId)
-    {
-        if (teamId == Guid.Empty)
-        {
-            return BadRequest("Team ID must be provided.");
-        }
-
-        var users = await _teamMemberService.GetUsersByTeamIdAsync(teamId);
-        return Ok(users);
     }
 }
