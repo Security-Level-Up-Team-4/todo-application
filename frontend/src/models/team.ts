@@ -2,15 +2,16 @@ import type { Todo } from "./todo";
 import type { User } from "./user";
 
 export interface Team {
-  id: number;
-  name: string;
+  teamId: number;
+  teamName: string;
+  creator?: string;
   todos?: Todo[];
   users?: User[];
 }
 
 export const mockTeams: Team[] = [
-  { name: "SPW", id: 0 },
-  { name: "Vodacom", id: 1 },
-  { name: "MTN", id: 2 },
-  { name: "CellC", id: 3 },
+  { teamName: "SPW", teamId: 0 },
+  { teamName: "Vodacom", teamId: 1 },
+  { teamName: "MTN", teamId: 2 },
+  { teamName: "CellC", teamId: 3 },
 ];

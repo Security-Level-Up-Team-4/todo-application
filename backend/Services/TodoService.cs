@@ -70,14 +70,14 @@ public class TodosService : ITodosService
 public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
 {
         var team = await _teamsRepository.GetByIdAsync(teamId);
-        if (team == null)
-            return null;
+        if (team == null) throw new KeyNotFoundException("Team does not exist");
 
         var teamMembers = await _teamMembersService.GetUsersByTeamIdAsync(teamId);
         if (!teamMembers.Any(m => m.Id == userId))
             throw new KeyNotFoundException("User is not a member of this team.");
 
         var todoItems = await _repo.GetByTeamIdAsync(teamId);
+        var teamCreator = await _usersRepository.GetByIdAsync(team.CreatedBy);
 
         var taskStatuses = await _taskStatusesRepository.GetAllAsync();
         var statusMap = taskStatuses.ToDictionary(s => s.id, s => s.name);
@@ -101,6 +101,7 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
         {
             TeamId = team.Id,
             TeamName = team.Name,
+            Creator = teamCreator?.Username ?? "",
             Users = usersList,
             Todos = TodosList
         };  

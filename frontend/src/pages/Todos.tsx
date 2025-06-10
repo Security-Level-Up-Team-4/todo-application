@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { TodoStatus, type Todo } from "../models/todo";
 import CreateTodoDialog from "../components/dialogs/CreateTodoDialog";
 import RemoveUsersDialog from "../components/dialogs/RemoveUsersDialog";
-import {  type User } from "../models/user";
+import { type User } from "../models/user";
 import { addUser, getTeam, removeUsers } from "../api/teams";
 import { createTodo } from "../api/todos";
 import Loader from "../components/Loader";
@@ -27,6 +27,7 @@ function Todos() {
   const [teamName, setTeamName] = useState<string>("");
   const [todos, setTodos] = useState<Todo[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [teamCreator, setTeamCreator] = useState<string | undefined>(undefined);
 
   const [loading, setLoading] = useState(true);
   const [errorPageMessage, setErrorPageMessage] = useState("");
@@ -39,7 +40,8 @@ function Todos() {
         const data = await getTeam(team ?? "0");
         setTodos(data?.todos ?? []);
         setUsers(data?.users ?? []);
-        setTeamName(data.name)
+        setTeamName(data.teamName);
+        setTeamCreator(data?.creator);
       } catch (error) {
         setErrorPageMessage(
           error instanceof Error ? error.message : "An unknown error occurred"
@@ -122,18 +124,22 @@ function Todos() {
             >
               New todo
             </button>
-            <button
-              className="px-4 py-2 border max-w-36 w-full hover:bg-gray-200 cursor-pointer"
-              onClick={() => setIsAddUserDialogOpen(true)}
-            >
-              Add user
-            </button>
-            <button
-              className="px-4 py-2 border max-w-36 w-full hover:bg-gray-200 cursor-pointer"
-              onClick={() => setIsRemoveUsersDialogOpen(true)}
-            >
-              Remove users
-            </button>
+            {localStorage.getItem("username") === teamCreator && (
+              <>
+                <button
+                  className="px-4 py-2 border max-w-36 w-full hover:bg-gray-200 cursor-pointer"
+                  onClick={() => setIsAddUserDialogOpen(true)}
+                >
+                  Add user
+                </button>
+                <button
+                  className="px-4 py-2 border max-w-36 w-full hover:bg-gray-200 cursor-pointer"
+                  onClick={() => setIsRemoveUsersDialogOpen(true)}
+                >
+                  Remove users
+                </button>
+              </>
+            )}
           </section>
           <section className="flex flex-col gap-2">
             {todos
