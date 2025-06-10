@@ -17,5 +17,5 @@ public interface ITodosService
     Task<TodosDTO?> UpdateAssignedToAsync(Guid todoId, Guid assignedTo);
     Task<TodosDTO?> UnassignAsync(Guid todoName, Guid assignedTo);
     Task<Todos?> UpdateUpdatedAtAsync(Guid todoId);
-    Task<TodosDTO?> UpdateClosedAtAsync(Guid todoId);
+    Task<TodosDTO?> UpdateClosedAtAsync(Guid todoId, Guid caller);
 }

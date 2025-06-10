@@ -210,15 +210,15 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
     {
         var todo = await CheckIfTodoExistsAsync(id);
         if (todo == null)
-            throw new Exception($"Todo with ID {id} not found.");
+            throw new KeyNotFoundException($"Todo not found.");
         var taskStatus = await _taskStatusesRepository.GetByNameAsync("Open");
         
         if (todo.StatusId != taskStatus.id)
-            throw new InvalidOperationException("Cannot assign a todo that is not active.");
+            throw new InvalidOperationException("You may only assign open todo's");
 
         var user = await _usersRepository.GetByIdAsync(assignedTo);
         if (user == null)
-            throw new KeyNotFoundException($"User with ID {assignedTo} not found.");
+            throw new KeyNotFoundException($"User not found.");
             
         await isATeamMember(todo.TeamId, assignedTo);
 
@@ -251,10 +251,13 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
     {
         var todo = await _repo.GetByIdAsync(todoId);
         if (todo == null)
-            throw new KeyNotFoundException($"Todo with ID {todoId} not found.");
+            throw new KeyNotFoundException($"Todo not found.");
         var user = await _usersRepository.GetByIdAsync(userId);
         if (user == null)
-            throw new KeyNotFoundException($"User with ID {userId} not found.");
+            throw new KeyNotFoundException($"User not found.");
+
+        if (todo.assigned_to != userId)
+            throw new InvalidOperationException("Cannot unassign a todo that isn't assigned to you");
             
         await isATeamMember(todo.TeamId, userId);
 
@@ -292,10 +295,20 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
         return todo;
     }
 
-    public async Task<TodosDTO?> UpdateClosedAtAsync(Guid id)
+    public async Task<TodosDTO?> UpdateClosedAtAsync(Guid id, Guid caller)
     {
         var todo = await CheckIfTodoExistsAsync(id);
+        if (todo == null) throw new KeyNotFoundException("Todo not found");
+
+        var inProg = await _taskStatusesRepository.GetByNameAsync("In Progress");
+        if (inProg.id != todo.StatusId) throw new InvalidOperationException("Todo is not in progress");
+
+        if (caller != todo.assigned_to) throw new InvalidOperationException("Cannot close a todo assigned to someone else");
+
         var status = await _taskStatusesRepository.GetByNameAsync("Closed");
+
+        await isATeamMember(todo.TeamId, caller);
+
 
         todo.StatusId = status.id;
         todo.CreatedAt = DateTime.SpecifyKind(todo.CreatedAt, DateTimeKind.Utc);

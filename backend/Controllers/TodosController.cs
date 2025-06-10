@@ -71,6 +71,10 @@ public class TodosController : ControllerBase
             var updated = await _service.UpdateAssignedToAsync(todoId, userId);
             return Ok(updated);
         }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
         catch (KeyNotFoundException ex)
         {
             return NotFound(new { message = ex.Message });
@@ -92,6 +96,10 @@ public class TodosController : ControllerBase
             var updated = await _service.UnassignAsync(todoId, userId);
             return Ok(updated);
         }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
         catch (KeyNotFoundException ex)
         {
             return NotFound(new { message = ex.Message });
@@ -108,8 +116,13 @@ public class TodosController : ControllerBase
     {
         try
         {
-            var updated = await _service.UpdateClosedAtAsync(todoId);
+            var userId = _userContextService.GetUserId();
+            var updated = await _service.UpdateClosedAtAsync(todoId, userId);
             return Ok(updated);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
         }
         catch (KeyNotFoundException ex)
         {
