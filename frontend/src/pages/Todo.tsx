@@ -89,7 +89,7 @@ const TodoDetails = () => {
             </button>
             <section className="flex items-center justify-between border-b pb-4 mb-4">
               <section>
-                <section className="text-xl font-semibold text-gray-800">
+                <section className="text-xl text-wrap font-semibold text-gray-800">
                   {todo?.title}
                 </section>
                 <section className="flex items-center mt-1 text-gray-500 text-sm">
