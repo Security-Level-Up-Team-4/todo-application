@@ -30,29 +30,6 @@ public class TeamsService : ITeamsService
         return await _teamsRepository.GetAllAsync();
     }
 
-    public async Task<TeamDetailsDto?> GetTeamByIdAsync(Guid id)
-    {
-        var team = await _teamsRepository.GetByIdAsync(id);
-        var teamMembers = await _teamMembersService.GetUsersByTeamIdAsync(id);
-        var todoItems = await _todosRepository.GetByTeamIdAsync(id);
-        return new TeamDetailsDto
-        {
-            TeamId = team.Id,
-            TeamName = team.Name,
-            Todos = todoItems.Select(todo => new TodosDTO
-            {
-                title = todo.Title,
-                description = todo.Description,
-                priority = todo.PriorityId,
-                priorityName = _prioritiesRepository.GetByIdAsync(todo.PriorityId).Result?.Name,
-            }).ToList(),
-            Users = teamMembers.Select(member => new UserDto
-            {
-                Id = member.Id,
-                Username = member.Username,
-            }).ToList()
-        };  
-    }
 
     public async Task<IEnumerable<Teams>> GetAllTeamsByUserIdAsync(Guid userId)
     {

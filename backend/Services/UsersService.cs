@@ -51,7 +51,7 @@ public class UsersService : IUsersService
     {
         var user =await _userRepository.GetByIdAsync(userId);
         if (user == null)
-            throw new KeyNotFoundException($"User with ID {userId} not found.");
+            throw new KeyNotFoundException($"User with ID not found.");
 
         var role = await _roleRepository.GetByNameAsync(roleName);
         if (role == null)

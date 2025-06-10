@@ -7,6 +7,7 @@ import Loader from "../components/Loader";
 import { getTeams, addTeam } from "../api/teams";
 import ErrorPage from "../components/ErrorPage";
 import ErrorDialog from "../components/dialogs/ErrorDialog";
+import { UserRoles } from "../models/user";
 
 function Teams() {
   const navigate = useNavigate();
@@ -64,20 +65,21 @@ function Teams() {
             Welcome, {localStorage.getItem("username") ?? "User"}
           </h1>
           <section className="grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-4 w-full justify-center">
-            {/* TODO check if user is a team lead */}
-            <button
-              onClick={() => setIsDialogOpen(true)}
-              className="w-full h-32 shadow-lg border flex items-center justify-center hover:bg-gray-200 cursor-pointer text-9xl pb-6"
-            >
-              +
-            </button>
+            {localStorage.getItem("user-role") == UserRoles.TEAMLEAD && (
+              <button
+                onClick={() => setIsDialogOpen(true)}
+                className="w-full h-32 shadow-lg border flex items-center justify-center hover:bg-gray-200 cursor-pointer text-9xl pb-6"
+              >
+                +
+              </button>
+            )}
             {teams.map((team, index) => (
               <button
                 key={index}
-                onClick={() => navigate(`/todos?team=${team.id}`)}
+                onClick={() => navigate(`/todos?team=${team.teamId}`)}
                 className="w-full h-32 shadow-lg border flex items-center justify-center hover:bg-gray-200 cursor-pointer"
               >
-                {team.name}
+                {team.teamName}
               </button>
             ))}
           </section>

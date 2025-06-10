@@ -68,7 +68,7 @@ function RemoveUsersDialog({
           )}
         </section>
 
-        <section className="flex justify-end space-x-2 pt-4">
+        <section className="flex flex-wrap justify-end space-x-2 pt-4">
           <button
             type="button"
             onClick={handleClose}
