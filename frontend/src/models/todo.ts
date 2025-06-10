@@ -82,24 +82,11 @@ export const mockTodos: Todo[] = [
 
 export interface TodoTimeline {
   id: number;
-  name: string;
-  events: TodoTimelineEvent[];
+  title: string;
+  timeline: TodoTimelineEvent[];
 }
 
 export interface TodoTimelineEvent {
   event: string;
-  date: string;
-  time: string;
+  createdAt: Date;
 }
-
-export const mockTimeline: TodoTimeline = {
-  id: 5,
-  name: "Tackle login",
-  events: [
-    { time: "14:23", date: "02/06/2025", event: "Created" },
-    { time: "14:26", date: "02/06/2025", event: "Assigned to User 1" },
-    { time: "18:45", date: "03/06/2025", event: "Unassigned from user 2" },
-    { time: "19:23", date: "08/07/2025", event: "Assigned to user 3" },
-    { time: "19:23", date: "12/07/2025", event: "Closed" },
-  ],
-};

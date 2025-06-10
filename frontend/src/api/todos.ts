@@ -1,5 +1,4 @@
 import {
-  mockTimeline,
   type Todo,
   type TodoTimeline,
 } from "../models/todo";
@@ -20,18 +19,15 @@ async function getTodo(todoId: string): Promise<Todo> {
 
 // Both todo user and team lead can do (Have to be a member of the team that the todo belongs in)
 async function getTodoTimeline(todoId: string): Promise<TodoTimeline> {
-  // const response = await apiAuthedFetch({path: `/api/todo/timeline?id=${todoId}`, method: "GET"});
-  // if (!response.ok) {
-  //   const errorText = await response
-  //     .json()
-  //     .then((data) => data.message)
-  //     .catch(() => response.status.toString());
-  //   throw new Error(`Error: ${errorText}`);
-  // }
-  // return await response.json();
-
-  console.log(todoId);
-  return mockTimeline;
+  const response = await apiAuthedFetch({path: `/api/todos/timeline?id=${todoId}`, method: "GET"});
+  if (!response.ok) {
+    const errorText = await response
+      .json()
+      .then((data) => data.message)
+      .catch(() => response.status.toString());
+    throw new Error(`Error: ${errorText}`);
+  }
+  return await response.json();
 }
 
 // Both todo user and team lead can do (Have to be a member of the team that the todo belongs in), todo has to be open

@@ -133,8 +133,9 @@ public class TodosController : ControllerBase
             return Unauthorized(new { message = ex.Message });
         }
     }
-    
+
     [HttpGet("timeline")]
+    [Authorize(Roles = "team_lead,todo_user")]
     public async Task<IActionResult> GetTimelineByTodoId([FromQuery] Guid id)
     {
         if (id == Guid.Empty)
