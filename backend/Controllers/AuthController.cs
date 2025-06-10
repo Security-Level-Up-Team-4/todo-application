@@ -81,7 +81,7 @@ namespace backend.Controllers
                 return Unauthorized(new { message = "Invalid 2FA token." });
 
             var token = _authService.GenerateJwtToken(user);
-            var userName = user.Name; 
+            var userName = user.Username; 
             var userRoleName = user.Role?.Name;
 
             return Ok(new
