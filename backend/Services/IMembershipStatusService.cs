@@ -6,8 +6,6 @@ namespace backend.Services;
 public interface IMembershipStatusService
 {
     Task<IEnumerable<MembershipStatus>> GetAllStatusesAsync();
-    Task<MembershipStatus> CreateStatusAsync(string status);//Do we need this
     Task<MembershipStatus?> GetStatusByIdAsync(int id);
-    Task<MembershipStatus?> UpdateStatusAsync(int id, string updatedStatus);//Do we need this
     
 }

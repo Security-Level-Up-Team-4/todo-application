@@ -85,7 +85,7 @@ public class TeamsService : ITeamsService
         };
 
         var newTeam = await _teamsRepository.AddAsync(team);
-        await _teamMembersService.AddTeamMemberAsync(newTeam.Id ,userExists.Username);
+        await _teamMembersService.AddTeamMemberAsync(newTeam.Id, userExists.Username, createdBy);
 
         return newTeam;
     }

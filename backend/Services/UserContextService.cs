@@ -9,15 +9,14 @@ public class UserContextService : IUserContextService
         _httpContextAccessor = httpContextAccessor;
     }
 
-public Guid GetUserId()
-{
-    var user = _httpContextAccessor.HttpContext?.User;
-    var userIdClaim = user?.FindFirst(ClaimTypes.NameIdentifier)
-                      ?? user?.FindFirst("sub");
+    public Guid GetUserId()
+    {
+        var user = _httpContextAccessor.HttpContext?.User;
+        var userIdClaim = user?.FindFirst(ClaimTypes.NameIdentifier) ?? user?.FindFirst("sub");
 
-    if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
-        throw new UnauthorizedAccessException("User ID claim is missing or invalid.");
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
+            throw new UnauthorizedAccessException("401: Unauthorized - You need to login");
 
-    return userId;
-}
+        return userId;
+    }
 }

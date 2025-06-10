@@ -25,34 +25,4 @@ public class TaskStatusesService : ITaskStatusesService
         return status;
     }
 
-    public async Task<TaskStatuses> CreateAsync(string taskName)
-    {
-        var existingStatus = await _repository.GetByNameAsync(taskName);
-        if (existingStatus != null)
-        {
-            throw new InvalidOperationException($"Task status '{taskName}' already exists.");
-        }
-        var status = new TaskStatuses { name = taskName };
-        var created = await _repository.CreateAsync(status);
-        return created;
-    }
-
-    public async Task UpdateAsync(int id, string taskName)
-    {
-        var existingStatus = await _repository.GetByIdAsync(id);
-        if (existingStatus == null)
-        {
-            throw new KeyNotFoundException($"Task status with ID {id} not found.");
-        }
-
-
-        var nameExists = await _repository.GetByNameAsync(taskName);
-        if (nameExists != null && nameExists.id != id)
-        {
-            throw new InvalidOperationException($"Task status '{taskName}' already exists.");
-        }
-    
-        var status = new TaskStatuses { name = taskName };
-        await _repository.UpdateAsync(status);
-    }
 }

@@ -1,5 +1,6 @@
 using backend.DTOs;
 using backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers;
@@ -18,43 +19,129 @@ public class TodosController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [Authorize(Roles = "team_lead,todo_user")]
     public async Task<ActionResult> GetById(Guid id)
     {
-        var userId = _userContextService.GetUserId();
-        var todo = await _service.GetByIdAsync(id,userId);
-        return Ok(todo);
+        try
+        {
+            var userId = _userContextService.GetUserId();
+            var todo = await _service.GetByIdAsync(id, userId);
+            if (todo == null)
+                return NotFound(new { message = "Todo does not exist" });
+            return Ok(todo);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { message = ex.Message });
+        }
     }
 
     [HttpPost("{teamId:guid}")]
+    [Authorize(Roles = "team_lead,todo_user")]
     public async Task<ActionResult> Create([FromBody] TodosDTO dto, Guid teamId)
     {
+        try
+        {
+            var userId = _userContextService.GetUserId();
 
-        var userId = _userContextService.GetUserId();
-
-        var newTodo = await _service.AddAsync(dto, userId, teamId);
-        return CreatedAtAction(nameof(Create), new { id = newTodo.id }, newTodo);
+            var newTodo = await _service.AddAsync(dto, userId, teamId);
+            return CreatedAtAction(nameof(Create), new { id = newTodo.id }, newTodo);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { message = ex.Message });
+        }
     }
 
-     [HttpPut("assign/{todoId:guid}")]
+    [HttpPut("assign/{todoId:guid}")]
+    [Authorize(Roles = "team_lead,todo_user")]
     public async Task<ActionResult> UpdateAssignedTo(Guid todoId)
     {
-        var userId = _userContextService.GetUserId();
-        var updated = await _service.UpdateAssignedToAsync(todoId, userId);
-        return Ok(updated);
+        try
+        {
+            var userId = _userContextService.GetUserId();
+            var updated = await _service.UpdateAssignedToAsync(todoId, userId);
+            return Ok(updated);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { message = ex.Message });
+        }
+        
     }
 
     [HttpPut("unassign/{todoId:guid}")]
+    [Authorize(Roles = "team_lead,todo_user")]
     public async Task<ActionResult> Unassign(Guid todoId)
     {
-        var userId = _userContextService.GetUserId();
-        var updated = await _service.UnassignAsync(todoId, userId);
-        return Ok(updated);
+        try
+        {
+            var userId = _userContextService.GetUserId();
+            var updated = await _service.UnassignAsync(todoId, userId);
+            return Ok(updated);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { message = ex.Message });
+        }
     }
 
     [HttpPut("close/{todoId:guid}")]
+    [Authorize(Roles = "team_lead,todo_user")]
     public async Task<ActionResult> UpdateClosedAt(Guid todoId)
     {
-        var updated = await _service.UpdateClosedAtAsync(todoId);
-        return Ok(updated);
+        try
+        {
+            var userId = _userContextService.GetUserId();
+            var updated = await _service.UpdateClosedAtAsync(todoId, userId);
+            return Ok(updated);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("timeline")]
+    [Authorize(Roles = "team_lead,todo_user")]
+    public async Task<IActionResult> GetTimelineByTodoId([FromQuery] Guid id)
+    {
+        if (id == Guid.Empty)
+            return BadRequest("Todo ID is required.");
+
+        var timeline = await _service.GetTimelineByTodoIdAsync(id);
+        return Ok(timeline);
     }
 }

@@ -16,6 +16,7 @@ namespace backend.Data
         public DbSet<Priorities> Priorities { get; set; }
         public DbSet<TaskStatuses> TaskStatuses { get; set; }
         public DbSet<Todos> Todos { get; set; }
+        public DbSet<TimelineEvent> TimelineEvents { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -67,7 +68,7 @@ namespace backend.Data
             modelBuilder.Entity<Priorities>().ToTable("priorities");
             modelBuilder.Entity<TaskStatuses>().ToTable("todo_status");
             modelBuilder.Entity<Todos>().ToTable("todos");
-
+            modelBuilder.Entity<TimelineEvent>().ToTable("timeline_events");
         }
     }
 }

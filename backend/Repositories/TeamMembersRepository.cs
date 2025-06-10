@@ -40,7 +40,7 @@ public class TeamMemberRepository : ITeamMemberRepository
     public async Task<List<TeamMembers>> GetUsersByTeamIdAsync(Guid teamId)
     {
         return await _context.TeamMembers
-            .Where(tm => tm.TeamId == teamId)
+            .Where(tm => tm.TeamId == teamId && tm.MembershipStatusId == 1)
             .ToListAsync();
     }
 }
