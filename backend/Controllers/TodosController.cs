@@ -54,7 +54,8 @@ public class TodosController : ControllerBase
     [HttpPut("close/{todoId:guid}")]
     public async Task<ActionResult> UpdateClosedAt(Guid todoId)
     {
-        var updated = await _service.UpdateClosedAtAsync(todoId);
+        var userId = _userContextService.GetUserId();
+        var updated = await _service.UpdateClosedAtAsync(todoId,userId);
         return Ok(updated);
     }
 }
