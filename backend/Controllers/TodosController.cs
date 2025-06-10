@@ -133,4 +133,14 @@ public class TodosController : ControllerBase
             return Unauthorized(new { message = ex.Message });
         }
     }
+    
+    [HttpGet("timeline")]
+    public async Task<IActionResult> GetTimelineByTodoId([FromQuery] Guid id)
+    {
+        if (id == Guid.Empty)
+            return BadRequest("Todo ID is required.");
+
+        var timeline = await _service.GetTimelineByTodoIdAsync(id);
+        return Ok(timeline);
+    }
 }

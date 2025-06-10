@@ -60,6 +60,9 @@ builder.Services.AddScoped<ITodosService, TodosService>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 
+builder.Services.AddScoped<ITimelineEventRepository, TimelineEventRepository>();
+
+
 var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 
 builder.Services.AddDbContext<AppDbContext>(options =>

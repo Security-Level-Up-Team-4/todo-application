@@ -13,11 +13,12 @@ public class TodosService : ITodosService
     private readonly ITeamsRepository _teamsRepository;
     private readonly ITeamMemberRepository _teamMembersRepository;
     private readonly IMembershipStatusRepository _membershipStatusRepository;
-     private readonly ITeamMembersService _teamMembersService;
+    private readonly ITeamMembersService _teamMembersService;
+    private readonly ITimelineEventRepository _timelineEventRepository;
 
 
     public TodosService(ITodosRepository repo, ITaskStatusesRepository taskStatusesRepository, IPrioritiesRepository prioritiesRepository,
-        IUsersRepository usersRepository, ITeamsRepository teamsRepository, ITeamMemberRepository teamMembersRepository, IMembershipStatusRepository membershipStatusRepository, ITeamMembersService teamMembersService)
+        IUsersRepository usersRepository, ITeamsRepository teamsRepository, ITeamMemberRepository teamMembersRepository, IMembershipStatusRepository membershipStatusRepository, ITeamMembersService teamMembersService, ITimelineEventRepository timelineEventRepository)
     {
         _taskStatusesRepository = taskStatusesRepository;
         _prioritiesRepository = prioritiesRepository;
@@ -27,6 +28,7 @@ public class TodosService : ITodosService
         _teamMembersRepository = teamMembersRepository;
         _membershipStatusRepository = membershipStatusRepository;
         _teamMembersService = teamMembersService;
+        _timelineEventRepository = timelineEventRepository;
     }
 
     public async Task<List<Todos>> GetAllAsync()
@@ -126,6 +128,15 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
         };
 
         await _repo.AddAsync(todo);
+        var timelineEvent = new TimelineEvent
+        {
+            UserId = userId,
+            TodoId = todo.id,
+            EventType = "Todo creation",
+            Description = $"Todo '{todo.Title}' created by {user.Username} in team {team.Name}.",
+            CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc)
+        };
+        await _timelineEventRepository.AddAsync(timelineEvent);
         return new TodosDTO
         {
             id = todo.id,
@@ -229,22 +240,31 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
         todo.ClosedAt = todo.ClosedAt.HasValue ? DateTime.SpecifyKind(todo.ClosedAt.Value, DateTimeKind.Utc) : null;
 
         await _repo.UpdateAsync(todo);
+        var timelineEvent = new TimelineEvent
+        {
+            UserId = assignedTo,
+            TodoId = todo.id,
+            EventType = "Todo assignment",
+            Description = $"Todo '{todo.Title}' is assigned to {user.Username}",
+            CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc)
+        };
+        await _timelineEventRepository.AddAsync(timelineEvent);
 
         return new TodosDTO
-         {
-             id = todo.id,
-             title = todo.Title,
-             description = todo.Description,
-             priority = todo.PriorityId,
-             priorityName = (await _prioritiesRepository.GetByIdAsync(todo.PriorityId)).Name,
-             status = (await _taskStatusesRepository.GetByIdAsync(todo.StatusId)).name,
-             createdBy = (await _usersRepository.GetByIdAsync(todo.CreatedBy)).Username,
-             teamId = todo.TeamId,
-             assignedTo = todo.assigned_to.HasValue ? (await _usersRepository.GetByIdAsync(todo.assigned_to.Value))?.Username ?? null : null,
-             createdAt = todo.CreatedAt,
-             updatedAt = todo.UpdatedAt,
-             closedAt = todo.ClosedAt
-         };
+        {
+            id = todo.id,
+            title = todo.Title,
+            description = todo.Description,
+            priority = todo.PriorityId,
+            priorityName = (await _prioritiesRepository.GetByIdAsync(todo.PriorityId)).Name,
+            status = (await _taskStatusesRepository.GetByIdAsync(todo.StatusId)).name,
+            createdBy = (await _usersRepository.GetByIdAsync(todo.CreatedBy)).Username,
+            teamId = todo.TeamId,
+            assignedTo = todo.assigned_to.HasValue ? (await _usersRepository.GetByIdAsync(todo.assigned_to.Value))?.Username ?? null : null,
+            createdAt = todo.CreatedAt,
+            updatedAt = todo.UpdatedAt,
+            closedAt = todo.ClosedAt
+        };
     }
     
     public async Task<TodosDTO?> UnassignAsync(Guid todoId, Guid userId)
@@ -267,22 +287,32 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
         todo.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
         todo.ClosedAt = todo.ClosedAt.HasValue ? DateTime.SpecifyKind(todo.ClosedAt.Value, DateTimeKind.Utc) : null;
         await _repo.UpdateAsync(todo);
+        
+        var timelineEvent = new TimelineEvent
+        {
+            UserId = userId,
+            TodoId = todo.id,
+            EventType = "Todo unassignment",
+            Description = $"{user.Username} has be been unassigned from todo '{todo.Title}'",
+            CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc)
+        };
+        await _timelineEventRepository.AddAsync(timelineEvent);
 
         return new TodosDTO
-         {
-             id = todo.id,
-             title = todo.Title,
-             description = todo.Description,
-             priority = todo.PriorityId,
-             priorityName = (await _prioritiesRepository.GetByIdAsync(todo.PriorityId)).Name,
-             status = (await _taskStatusesRepository.GetByIdAsync(todo.StatusId)).name,
-             createdBy = (await _usersRepository.GetByIdAsync(todo.CreatedBy)).Username,
-             teamId = todo.TeamId,
-             assignedTo = todo.assigned_to.HasValue ? (await _usersRepository.GetByIdAsync(todo.assigned_to.Value))?.Username ?? null : null,
-             createdAt = todo.CreatedAt,
-             updatedAt = todo.UpdatedAt,
-             closedAt = todo.ClosedAt
-         };
+        {
+            id = todo.id,
+            title = todo.Title,
+            description = todo.Description,
+            priority = todo.PriorityId,
+            priorityName = (await _prioritiesRepository.GetByIdAsync(todo.PriorityId)).Name,
+            status = (await _taskStatusesRepository.GetByIdAsync(todo.StatusId)).name,
+            createdBy = (await _usersRepository.GetByIdAsync(todo.CreatedBy)).Username,
+            teamId = todo.TeamId,
+            assignedTo = todo.assigned_to.HasValue ? (await _usersRepository.GetByIdAsync(todo.assigned_to.Value))?.Username ?? null : null,
+            createdAt = todo.CreatedAt,
+            updatedAt = todo.UpdatedAt,
+            closedAt = todo.ClosedAt
+        };
     }
 
     public async Task<Todos?> UpdateUpdatedAtAsync(Guid id)
@@ -295,7 +325,7 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
         return todo;
     }
 
-    public async Task<TodosDTO?> UpdateClosedAtAsync(Guid id, Guid caller)
+    public async Task<TodosDTO?> UpdateClosedAtAsync(Guid id, Guid userId)
     {
         var todo = await CheckIfTodoExistsAsync(id);
         if (todo == null) throw new KeyNotFoundException("Todo not found");
@@ -303,11 +333,12 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
         var inProg = await _taskStatusesRepository.GetByNameAsync("In Progress");
         if (inProg.id != todo.StatusId) throw new InvalidOperationException("Todo is not in progress");
 
-        if (caller != todo.assigned_to) throw new InvalidOperationException("Cannot close a todo assigned to someone else");
+        if (userId != todo.assigned_to) throw new InvalidOperationException("Cannot close a todo assigned to someone else");
 
         var status = await _taskStatusesRepository.GetByNameAsync("Closed");
+        var user = await _usersRepository.GetByIdAsync(userId);
 
-        await isATeamMember(todo.TeamId, caller);
+        await isATeamMember(todo.TeamId, userId);
 
 
         todo.StatusId = status.id;
@@ -317,20 +348,50 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
 
         await _repo.UpdateAsync(todo);
 
+        var timelineEvent = new TimelineEvent
+        {
+            UserId = userId,
+            TodoId = todo.id,
+            EventType = "Todo closure",
+            Description = $"Todo '{todo.Title}' has been closed by {user.Username}.",
+            CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc)
+        };
+        await _timelineEventRepository.AddAsync(timelineEvent);
+
         return new TodosDTO
-         {
-             id = todo.id,
-             title = todo.Title,
-             description = todo.Description,
-             priority = todo.PriorityId,
-             priorityName = (await _prioritiesRepository.GetByIdAsync(todo.PriorityId)).Name,
-             status = (await _taskStatusesRepository.GetByIdAsync(todo.StatusId)).name,
-             createdBy = (await _usersRepository.GetByIdAsync(todo.CreatedBy)).Username,
-             teamId = todo.TeamId,
-             assignedTo = todo.assigned_to.HasValue ? (await _usersRepository.GetByIdAsync(todo.assigned_to.Value))?.Username ?? null : null,
-             createdAt = todo.CreatedAt,
-             updatedAt = todo.UpdatedAt,
-             closedAt = todo.ClosedAt
-         };
+        {
+            id = todo.id,
+            title = todo.Title,
+            description = todo.Description,
+            priority = todo.PriorityId,
+            priorityName = (await _prioritiesRepository.GetByIdAsync(todo.PriorityId)).Name,
+            status = (await _taskStatusesRepository.GetByIdAsync(todo.StatusId)).name,
+            createdBy = (await _usersRepository.GetByIdAsync(todo.CreatedBy)).Username,
+            teamId = todo.TeamId,
+            assignedTo = todo.assigned_to.HasValue ? (await _usersRepository.GetByIdAsync(todo.assigned_to.Value))?.Username ?? null : null,
+            createdAt = todo.CreatedAt,
+            updatedAt = todo.UpdatedAt,
+            closedAt = todo.ClosedAt
+        };
+    }
+
+    public async Task<TimelineEventDto> GetTimelineByTodoIdAsync(Guid todoId)
+    {
+        var todo = await _repo.GetByIdAsync(todoId);
+        if (todo == null)
+            throw new KeyNotFoundException($"Todo with ID {todoId} not found.");
+        var timelineEvents = await _timelineEventRepository.GetByTodoIdAsync(todoId);
+        var todoTimelineList = timelineEvents.Select(te => new TodoTimelineDto
+        {
+            Event = te.Description,
+            CreatedAt = DateTime.SpecifyKind(te.CreatedAt, DateTimeKind.Utc)
+        }).ToList();
+        var timelineEventDtos =new TimelineEventDto
+        {
+            Id = todo.id,
+            Title = todo.Title,
+            Timeline = todoTimelineList,
+        };
+        return timelineEventDtos;
     }
 }
