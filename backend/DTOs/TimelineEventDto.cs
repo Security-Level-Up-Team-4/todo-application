@@ -1,8 +1,12 @@
 public class TimelineEventDto
 {
-    public string todoName { get; set; } = string.Empty;
-    public string EventType { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
+    public Guid Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public List<TodoTimelineDto> Timeline { get; set; } = new List<TodoTimelineDto>();
+}
+
+public class TodoTimelineDto
+{
+    public string Event { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
-    public string PerformedBy { get; set; } = string.Empty; // Username or email
 }

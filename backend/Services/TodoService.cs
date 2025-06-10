@@ -355,4 +355,24 @@ public async Task<TeamDetailsDto?> GetByTeamIdAsync(Guid teamId, Guid userId)
             closedAt = todo.ClosedAt
         };
     }
+
+    public async Task<TimelineEventDto> GetTimelineByTodoIdAsync(Guid todoId)
+    {
+        var todo = await _repo.GetByIdAsync(todoId);
+        if (todo == null)
+            throw new KeyNotFoundException($"Todo with ID {todoId} not found.");
+        var timelineEvents = await _timelineEventRepository.GetByTodoIdAsync(todoId);
+        var todoTimelineList = timelineEvents.Select(te => new TodoTimelineDto
+        {
+            Event = te.Description,
+            CreatedAt = DateTime.SpecifyKind(te.CreatedAt, DateTimeKind.Utc)
+        }).ToList();
+        var timelineEventDtos =new TimelineEventDto
+        {
+            Id = todo.id,
+            Title = todo.Title,
+            Timeline = todoTimelineList,
+        };
+        return timelineEventDtos;
+    }
 }

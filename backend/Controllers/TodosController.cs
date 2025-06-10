@@ -21,7 +21,7 @@ public class TodosController : ControllerBase
     public async Task<ActionResult> GetById(Guid id)
     {
         var userId = _userContextService.GetUserId();
-        var todo = await _service.GetByIdAsync(id,userId);
+        var todo = await _service.GetByIdAsync(id, userId);
         return Ok(todo);
     }
 
@@ -35,7 +35,7 @@ public class TodosController : ControllerBase
         return CreatedAtAction(nameof(Create), new { id = newTodo.id }, newTodo);
     }
 
-     [HttpPut("assign/{todoId:guid}")]
+    [HttpPut("assign/{todoId:guid}")]
     public async Task<ActionResult> UpdateAssignedTo(Guid todoId)
     {
         var userId = _userContextService.GetUserId();
@@ -55,7 +55,17 @@ public class TodosController : ControllerBase
     public async Task<ActionResult> UpdateClosedAt(Guid todoId)
     {
         var userId = _userContextService.GetUserId();
-        var updated = await _service.UpdateClosedAtAsync(todoId,userId);
+        var updated = await _service.UpdateClosedAtAsync(todoId, userId);
         return Ok(updated);
+    }
+    
+    [HttpGet("timeline")]
+    public async Task<IActionResult> GetTimelineByTodoId([FromQuery] Guid id)
+    {
+        if (id == Guid.Empty)
+            return BadRequest("Todo ID is required.");
+
+        var timeline = await _service.GetTimelineByTodoIdAsync(id);
+        return Ok(timeline);
     }
 }
