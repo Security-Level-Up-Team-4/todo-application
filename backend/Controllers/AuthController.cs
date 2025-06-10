@@ -81,13 +81,21 @@ namespace backend.Controllers
                 return Unauthorized(new { message = "Invalid 2FA token." });
 
             var token = _authService.GenerateJwtToken(user);
-            return Ok(new { token });
+            var userName = user.Username; 
+            var userRoleName = user.Role?.Name;
+
+            return Ok(new
+            {
+                token,
+                userName, 
+                userRoleName 
+            });
         }
 
         [HttpPost("confirm-2fa")]
         public async Task<IActionResult> ConfirmTwoFactor([FromBody] Confirm2FASetupRequest request)
         {
-            var user = await _authService.GetUserByIdAsync(request.TempSessionUserId);
+            var user = await _authService.GetUserByTempSessionTokenAsync(request.TempSessionUserId);
             if (user == null)
                 return Unauthorized();
 
