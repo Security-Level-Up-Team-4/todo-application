@@ -62,10 +62,10 @@ function Teams() {
       ) : (
         <main className="flex flex-col gap-8 p-4 w-full">
           <h1 className="w-full pt-4 text-center font-bold text-2xl">
-            Welcome, {localStorage.getItem("username") ?? "User"}
+            Welcome, {sessionStorage.getItem("username") ?? "User"}
           </h1>
           <section className="grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-4 w-full justify-center">
-            {localStorage.getItem("user-role") == UserRoles.TEAMLEAD && (
+            {sessionStorage.getItem("user-role") == UserRoles.TEAMLEAD && (
               <button
                 onClick={() => setIsDialogOpen(true)}
                 className="w-full h-32 shadow-lg border flex items-center justify-center hover:bg-gray-200 cursor-pointer text-9xl pb-6"

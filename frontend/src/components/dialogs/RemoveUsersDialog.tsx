@@ -46,13 +46,13 @@ function RemoveUsersDialog({
       <form onSubmit={handleSubmit} className="space-y-4">
         <section className="max-h-60 overflow-y-auto">
           {users.filter(
-            (user) => user.username !== localStorage.getItem("username")
+            (user) => user.username !== sessionStorage.getItem("username")
           ).length === 0 ? (
             <p>No users have been added to this team yet</p>
           ) : (
             users
               .filter(
-                (user) => user.username !== localStorage.getItem("username")
+                (user) => user.username !== sessionStorage.getItem("username")
               )
               .map((user) => (
                 <label key={user.id} className="flex items-center space-x-2">

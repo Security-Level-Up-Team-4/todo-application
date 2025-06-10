@@ -85,7 +85,7 @@ const AdminManagement = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <select
-                        className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
+                        className="block w-30 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
                         value={user.roleName}
                         onChange={(e) =>
                           handleRoleChange(user.id, e.target.value)

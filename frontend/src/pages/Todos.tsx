@@ -124,7 +124,7 @@ function Todos() {
             >
               New todo
             </button>
-            {localStorage.getItem("username") === teamCreator && (
+            {sessionStorage.getItem("username") === teamCreator && (
               <>
                 <button
                   className="px-4 py-2 border max-w-36 w-full hover:bg-gray-200 cursor-pointer"

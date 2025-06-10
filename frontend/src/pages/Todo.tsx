@@ -171,7 +171,7 @@ const TodoDetails = () => {
                       Assign to myself
                     </button>
                   )}
-                  {todo?.status === TodoStatus.INPROGRESS && localStorage.getItem("username") == todo.assignedTo && (
+                  {todo?.status === TodoStatus.INPROGRESS && sessionStorage.getItem("username") == todo.assignedTo && (
                     <>
                       <button
                         className="w-full py-2 px-4 rounded bg-green-500 text-white font-semibold hover:bg-green-600 transition-colors mb-2"
