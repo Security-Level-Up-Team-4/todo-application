@@ -21,7 +21,7 @@ namespace backend.DTOs
 
     public class Confirm2FASetupRequest
     {
-        public Guid TempSessionUserId { get; set; }
+        public string TempSessionUserId { get; set; }
         public string Token { get; set; } = string.Empty;
     }
 
