@@ -22,10 +22,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
         policy =>
         {
-            policy.AllowAnyOrigin()
+            policy.WithOrigins("https://d3uwa2pp76z3b7.cloudfront.net")
                   .AllowAnyHeader()
-                  .AllowAnyMethod();
-                //   .AllowCredentials(); 
+                  .AllowAnyMethod()
+                  .AllowCredentials(); 
         });
 });
 
