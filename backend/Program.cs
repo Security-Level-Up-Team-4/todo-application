@@ -24,8 +24,7 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins("https://d3uwa2pp76z3b7.cloudfront.net")
                   .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials(); 
+                  .AllowAnyMethod();
         });
 });
 
@@ -99,7 +98,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
 
